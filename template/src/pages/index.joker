@@ -1,0 +1,28 @@
+<template>
+    <p>欢迎使用Joker前端开发平台</p>
+    <p>
+        当前时间：@model.time
+    </p>
+</template>
+<script>
+import { Component } from "@joker.front/core";
+
+export default class extends Component {
+    model = {
+        time: ""
+    };
+
+    mounted() {
+        setInterval(() => {
+            this.model.time = new Date().toLocaleString();
+        }, 1000);
+    }
+}
+</script>
+
+<style scoped>
+p {
+    line-height: 30px;
+    text-align: center;
+}
+</style>

@@ -1,0 +1,16 @@
+{
+    "name": "@test/joker",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "joker --log=debug",
+        "build": "joker build --log=debug"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@joker.front/cli": "workspace:^1.1.25",
+        "@joker.front/core": "^1.2.125"
+    }
+}

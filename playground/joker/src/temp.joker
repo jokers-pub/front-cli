@@ -1,0 +1,29 @@
+<template>
+    111
+    @for(let i=0;i<this.props.count;i++) {
+        <div>
+            2@i
+            : @model.time
+        </div>
+    }
+</template>
+<script>
+import { Component } from "@joker.front/core";
+
+export default class extends Component<{ count: number }> {
+    model = {
+        time: 0
+    };
+    defaultProps = {
+        count: 0
+    };
+    mounted() {
+        setInterval(() => {
+            this.model.time += 1;
+        }, 100);
+    }
+}
+</script>
+
+<style>
+</style>

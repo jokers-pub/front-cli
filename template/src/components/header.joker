@@ -1,0 +1,30 @@
+<template>
+    <div>
+        <a href="@props.href" target="_blank"><img src="/joker.png" class="logo" alt="Joker logo" /></a>
+    </div>
+</template>
+
+<script>
+import { Component } from "@joker.front/core";
+export default class extends Component<{
+    href: string;
+}> {}
+</script>
+
+<style scoped>
+div {
+    text-align: center;
+}
+.logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+}
+.logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.vue:hover {
+    filter: drop-shadow(0 0 2em #42b883aa);
+}
+</style>

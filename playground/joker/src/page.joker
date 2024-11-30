@@ -1,0 +1,39 @@
+<template>
+    <div>
+        我是Joker125336666内容11334：
+        <b>@model.date</b>
+        <Temp count="@(3)"></Temp>
+        <Temp2 count="@(2)"></Temp2>
+    </div>
+</template>
+<script>
+import { Component } from "@joker.front/core";
+
+export default class extends Component {
+    model = {
+        date: 0
+    };
+    components = {
+        Temp: () => import("./temp.joker"),
+        Temp2: () => import("./component/temp.joker"),
+        Temp3: () => import("./component/my/temp2.joker")
+    };
+    mounted() {
+        setInterval(() => {
+            this.model.date++;
+        }, 100);
+    }
+
+    public aaa(ss: string, b: string): boolean {
+        return true;
+    }
+}
+</script>
+<style lang="scss" scoped>
+div {
+    background: orange;
+    b .aa {
+        color: #fff;
+    }
+}
+</style>

@@ -1,0 +1,21 @@
+<template>
+    <p>
+        @model.a
+    </p>
+</template>
+<script>
+import { Component } from "@joker.front/core";
+
+export default class extends Component {
+    model = {
+        a: "3"
+    };
+}
+</script>
+
+<style lang="scss" scoped>
+p {
+    background-color: black;
+    color: #fff;
+}
+</style>

@@ -1,0 +1,29 @@
+<template>
+    <div>
+        1234
+        <Temp />
+        <div class="img"></div>
+    </div>
+</template>
+<script>
+import { Component } from "@joker.front/core";
+export default class extends Component {
+    model = {
+        date: 0
+    };
+    components = {
+        Temp: () => import("./temp.joker")
+    };
+}
+</script>
+<style lang="scss" scoped>
+div {
+    background: orange;
+}
+.img {
+    background: url(./resources/1.webp) no-repeat center center;
+    width: 100px;
+    height: 100px;
+    background-size: cover;
+}
+</style>

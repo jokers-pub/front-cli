@@ -1,0 +1,15 @@
+{
+    "name": "@test/json",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "joker --log=debug",
+        "build": "joker build"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@joker.front/cli": "workspace:^1.1.34"
+    }
+}

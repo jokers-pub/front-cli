@@ -1,0 +1,107 @@
+{
+    "name": "@joker.front/cli",
+    "version": "1.1.136",
+    "description": "",
+    "scripts": {
+        "build-client": "joker_build_library --format=es --sourcemap=false --terser --input=src/client/index.ts --output=client",
+        "build-cli": "rm -rf types && joker_build_library --sourcemap=false --terser --format=cjs --input=src/cli/index.ts",
+        "build:debugger": "rm -rf types && joker_build_library --format=cjs --input=src/cli/index.ts",
+        "build": "rm -rf types && npm run build-client & npm run build-cli",
+        "release": "npm run build && joker_release_library",
+        "release:prod": "npm run build && npm publish --access public --registry https://registry.npmjs.org/"
+    },
+    "main": "dist/bundle.js",
+    "module": "dist/bundle.js",
+    "types": "types/cli/index.d.ts",
+    "author": "Zohar",
+    "license": "MIT",
+    "keywords": [
+        "joker",
+        "cli",
+        "dev-server",
+        "build-tool"
+    ],
+    "homepage": "jokers.pub",
+    "bin": {
+        "joker": "bin/joker.js"
+    },
+    "files": [
+        "dist/bundle.js",
+        "dist/client.es.js",
+        "bin/*",
+        "types/*",
+        "template",
+        "README.md"
+    ],
+    "dependencies": {
+        "chokidar": "^3.6.0",
+        "esbuild": "^0.23.1",
+        "postcss": "^8.4.47",
+        "rollup": "^4.22.2"
+    },
+    "devDependencies": {
+        "@ampproject/remapping": "^2.3.0",
+        "@joker.front/library-cli": "1.2.13",
+        "@joker.front/sfc": "^1.1.12",
+        "@joker.front/shared": "^1.5.26",
+        "@jridgewell/trace-mapping": "^0.3.25",
+        "@rollup/pluginutils": "^5.1.0",
+        "@types/connect": "^3.4.35",
+        "@types/connect-history-api-fallback": "^1.3.5",
+        "@types/cors": "^2.8.13",
+        "@types/cross-spawn": "^6.0.2",
+        "@types/estree": "^1.0.0",
+        "@types/etag": "^1.8.1",
+        "@types/http-proxy": "^1.17.10",
+        "@types/less": "^3.0.3",
+        "@types/node": "^18.15.11",
+        "@types/postcss-import": "^14.0.0",
+        "@types/resolve": "^1.20.2",
+        "@types/stylus": "^0.48.38",
+        "@types/ws": "^8.5.4",
+        "acorn": "^8.12.1",
+        "cac": "^6.7.14",
+        "connect": "^3.7.0",
+        "connect-history-api-fallback": "^2.0.0",
+        "cors": "^2.8.5",
+        "cross-spawn": "^7.0.3",
+        "es-module-lexer": "^1.5.4",
+        "estree-walker": "^3.0.3",
+        "etag": "^1.8.1",
+        "fast-glob": "^3.3.2",
+        "http-proxy": "^1.18.1",
+        "launch-editor": "^2.9.1",
+        "less": "^4.2.0",
+        "magic-string": "^0.30.11",
+        "mlly": "^1.7.1",
+        "mrmime": "^1.0.1",
+        "open": "^10.1.0",
+        "picocolors": "^1.1.0",
+        "postcss-import": "^16.1.0",
+        "postcss-load-config": "^6.0.1",
+        "postcss-modules": "^6.0.0",
+        "postcss-selector-parser": "^6.1.2",
+        "resolve": "^1.22.8",
+        "resolve.exports": "^2.0.2",
+        "sass": "^1.79.3",
+        "sirv": "^2.0.4",
+        "slash": "^5.1.0",
+        "strip-literal": "^2.1.0",
+        "terser": "^5.33.0",
+        "tsconfck": "^3.1.3",
+        "typescript": "^5.6.2",
+        "ws": "^8.18.0"
+    },
+    "peerDependencies": {
+        "less": "^4.2.0",
+        "sass": "^1.79.3"
+    },
+    "peerDependenciesMeta": {
+        "sass": {
+            "optional": true
+        },
+        "less": {
+            "optional": true
+        }
+    }
+}

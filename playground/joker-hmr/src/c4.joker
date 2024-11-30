@@ -1,0 +1,8 @@
+<template>
+    <p id="xxxx">我是内容</p>
+</template>
+<style scoped>
+#xxxx {
+    color: yellow;
+}
+</style>

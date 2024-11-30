@@ -1,0 +1,14 @@
+{
+  "name": "create",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "create": "joker create a"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@joker.front/cli": "workspace:^1.1.25"
+  }
+}

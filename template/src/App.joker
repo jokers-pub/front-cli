@@ -1,0 +1,14 @@
+<template>
+    <Header href="http://front.jokers.pub" />
+    <router-view></router-view>
+</template>
+<script>
+import { Component } from "@joker.front/core";
+import Header from "./components/header.joker";
+
+export default class extends Component {
+    components = {
+        Header
+    };
+}
+</script>

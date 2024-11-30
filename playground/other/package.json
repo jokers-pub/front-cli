@@ -1,0 +1,16 @@
+{
+    "name": "@test/other",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "joker build"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@joker.front/cli": "workspace:^1.1.34",
+        "dayjs": "^1.11.7",
+        "regenerator-runtime": "^0.13.11"
+    }
+}

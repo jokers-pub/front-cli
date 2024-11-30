@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>基础服务测试</title>
+    </head>
+    <script type="module">
+        import { JSTest } from "./js/main.js";
+
+        JSTest();
+    </script>
+    <link rel="icon" href="/joker.jpg" />
+    <script type="module" src="./js/tsTest.ts"></script>
+    <style>
+        :root {
+            --theme1: blue;
+        }
+        .box {
+            width: 100px;
+            height: 100px;
+            background: red;
+            float: left;
+        }
+    </style>
+    <script type="module">
+        import "./css/index.scss";
+    </script>
+    <link rel="stylesheet" href="./css/index.less" type="text/css" />
+    <body>
+        测试文本<i id="timer"></i>
+        <p>本次测试包括基础服务测试、热更新测试、三方依赖dep优化测试等</p>
+        <div>
+            <img src="./images/joker.jpg" />
+        </div>
+        <div class="box" data-scoped-ddd></div>
+        <div class="box" data-scoped-ddd></div>
+        <div class="box" data-scoped-ddd></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+
+        <custom-demo></custom-demo>
+        <script>
+            customElements.define(
+                "custom-demo",
+                class extends HTMLElement {
+                    constructor() {
+                        super();
+                        let root = this.attachShadow({ mode: "open" });
+
+                        root.innerHTML = `<style>div{
+                            height:100px;
+                            width:100px;
+                            background:var(--theme1,green);
+                        }
+                        :host{
+                           float:left;
+                        }
+                        </style><div></div>`;
+                    }
+                }
+            );
+        </script>
+    </body>
+</html>

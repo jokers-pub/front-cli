@@ -1,0 +1,23 @@
+<template>
+    <span class="test">4567</span>
+    <div class="img"></div>
+</template>
+<script>
+import { Component } from "@joker.front/core";
+
+export default class extends Component {
+    model = {};
+}
+</script>
+
+<style lang="scss" scoped>
+.test {
+    background: red;
+}
+.img {
+    background: url(./resources/2.webp) no-repeat center center;
+    width: 100px;
+    height: 100px;
+    background-size: cover;
+}
+</style>

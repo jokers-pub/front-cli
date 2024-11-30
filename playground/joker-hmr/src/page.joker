@@ -1,0 +1,33 @@
+<template>
+    <div>
+        <h1>完整实例</h1>
+        <Com1 />
+        <h1>只有template</h1>
+        <Com2 />
+        <h1>只有script</h1>
+        <Com3 />
+        <h1>template + style</h1>
+        <Com4 />
+        <h1>script + style</h1>
+        <Com5 />
+    </div>
+</template>
+<script>
+import { Component } from "@joker.front/core";
+import Com1 from "./c1.joker";
+import Com2 from "./c2.joker";
+import Com3 from "./c3.joker";
+import Com4 from "./c4.joker";
+import Com5 from "./c5.joker";
+export default class extends Component {
+    components = {
+        Com1,
+        Com2,
+        Com3,
+        Com4,
+        Com5
+    };
+}
+</script>
+<style lang="scss" scoped>
+</style>

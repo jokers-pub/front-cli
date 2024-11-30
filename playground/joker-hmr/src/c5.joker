@@ -1,0 +1,17 @@
+
+<script>
+import { Component, createText, createElement } from "@joker.front/core";
+
+export default class extends Component {
+    model = {};
+    template = function () {
+        return [createElement("div", { id: "xxxx" }, [createText("sss1")])];
+    };
+}
+</script>
+
+<style lange="css" scoped>
+#xxxx {
+    color: red;
+}
+</style>
