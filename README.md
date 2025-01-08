@@ -24,7 +24,7 @@ It furnishes two commands, "server" and "build", which respectively denote devel
 
 [Official Website](https://www.jokers.pub)
 
-[Help Documentation](https://front.jokers.pub#/cli)
+[Help Documentation](https://front.jokers.pub/cli/introduction)
 
 [Low-Code Platform](https://lowcode.jokers.pub)
 
@@ -54,6 +54,6 @@ pnpm add @joker.front/cli
 
 [官网](https://www.jokers.pub)
 
-[帮助文档](https://front.jokers.pub#/cli)
+[帮助文档](https://front.jokers.pub/cli/introduction)
 
 [低代码平台](https://lowcode.jokers.pub)

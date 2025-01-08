@@ -21,7 +21,7 @@
         "dev-server",
         "build-tool"
     ],
-    "homepage": "jokers.pub",
+    "homepage": "https://jokers.pub",
     "bin": {
         "joker": "bin/joker.js"
     },
