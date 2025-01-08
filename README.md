@@ -1,4 +1,4 @@
-# Joker CLI Scaffolding Project ![NPM Version](https://img.shields.io/npm/v/%40joker.front%2Fcli)
+# Joker CLI Project ![NPM Version](https://img.shields.io/npm/v/%40joker.front%2Fcli)
 
 The Next-Generation Front-End Toolchain: Swift, Efficient, and Adaptive.
 
