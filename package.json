@@ -15,13 +15,17 @@
     "types": "types/cli/index.d.ts",
     "author": "Zohar",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jokers-pub/front-cli.git"
+    },
     "keywords": [
         "joker",
         "cli",
         "dev-server",
         "build-tool"
     ],
-    "homepage": "https://jokers.pub",
+    "homepage": "https://front.jokers.pub/cli/introduction",
     "bin": {
         "joker": "bin/joker.js"
     },
