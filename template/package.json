@@ -6,7 +6,7 @@
         "build": "joker build"
     },
     "dependencies": {
-        "@joker.front/core": "^1.3.55",
+        "@joker.front/core": "^1.3.67",
         "@joker.front/router": "^1.0.38"
     },
     "devDependencies": {
