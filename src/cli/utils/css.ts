@@ -8,9 +8,11 @@ import {
     combineSourceMaps,
     CSS_LANG,
     CSS_LANG_RE,
+    extractPnpmPackagePath,
     generateCodeFrame,
     getPublicFilePath,
     normalizePath,
+    PNPM_RE,
     SHIMS_CSS_LANG_RE,
     transformSrcSetUrl,
     urlToFileURL
@@ -139,6 +141,17 @@ export async function compileCSS(
 
                     if (resolved) {
                         return path.resolve(resolved);
+                    }
+
+                    if (PNPM_RE.test(basedir)) {
+                        //pnpm 依赖查询
+                        let realPackagePath = extractPnpmPackagePath(basedir);
+
+                        let resolved = await atImportResolvers.css(id, realPackagePath);
+
+                        if (resolved) {
+                            return path.resolve(resolved);
+                        }
                     }
                     return id;
                 }

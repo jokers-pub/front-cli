@@ -85,6 +85,8 @@ export const LOOPBACK_HOSTS = ["localhost", "127.0.0.1", "::1", "0000:0000:0000:
 //#region  URL相关操作
 export const NODE_MODULES_RE = /(^|\/)node_modules\//;
 
+export const PNPM_RE = /(^|\/)node_modules\/.pnpm\//;
+
 export const SPECIAL_QUERT_RE = /[\?&](?:worker|sharedworker|raw|url)\b/;
 
 export const RAW_RE = /(\?|&)raw(?:&|$)/;
@@ -109,6 +111,17 @@ export function getDepVersion(url: string): string | undefined {
         return versionMatch[1].split("=")[1];
     }
     return;
+}
+
+export function extractPnpmPackagePath(str: string) {
+    // 正则表达式用于匹配目标路径
+    const regex = /^(.+?\/node_modules\/\.pnpm\/[^/]+\/)/;
+    const match = str.match(regex);
+
+    if (match) {
+        return match[1];
+    }
+    return str;
 }
 
 /**
@@ -339,7 +352,7 @@ export function isJSRequest(url: string): boolean {
 }
 
 export function isInNodeModules(id: string): boolean {
-    return id.includes("node_modules");
+    return NODE_MODULES_RE.test(id);
 }
 
 export function isJSONRequest(url: string): boolean {
