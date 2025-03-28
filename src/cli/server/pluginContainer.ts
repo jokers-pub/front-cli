@@ -232,7 +232,6 @@ export class PluginContainer {
             return result;
         }
 
-        logger.warn(LOGTAG, `resolveID未能返回转换的resolveId:${id}，引用来源：${importer}`);
         return null;
     }
 

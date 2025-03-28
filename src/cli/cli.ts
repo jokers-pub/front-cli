@@ -64,7 +64,7 @@ cli.command("build [root]", "打包构建")
                 command: "build",
                 mode: options.mode,
                 build: {
-                    sourcemap: !!transformBooleanStrValue(options.sourcemap || false),
+                    sourcemap: options.sourcemap,
                     outDir: options.outDir
                 }
             },

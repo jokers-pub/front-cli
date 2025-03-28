@@ -224,10 +224,6 @@ export async function resolveCliConfig(
     }
     result.assetsInclude = [...ASSET_TYPES, ...(result.assetsInclude || [])];
 
-    if (result.publicDir && normalizePath(result.publicDir).startsWith(normalizePath(result.root)) === false) {
-        logger.warn(LOGTAG, "public目录超出了root边界，请谨慎操作");
-    }
-
     let pkgPath = lookupFile(result.root, "package.json", true);
 
     if (pkgPath === undefined) {
