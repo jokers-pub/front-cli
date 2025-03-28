@@ -1,6 +1,6 @@
 {
     "name": "@joker.front/cli",
-    "version": "1.1.139",
+    "version": "1.1.140",
     "description": "",
     "scripts": {
         "build-client": "joker_build_library --format=es --sourcemap=false --terser --input=src/client/index.ts --output=client",
