@@ -39,7 +39,7 @@ cli.command("[root]", "开启开发者服务")
                 server: {
                     host: options.host,
                     port: options.port,
-                    open: transformBooleanStrValue(options.open) ?? true
+                    open: transformBooleanStrValue(options.open || true)
                 }
             },
             "server",
@@ -64,7 +64,7 @@ cli.command("build [root]", "打包构建")
                 command: "build",
                 mode: options.mode,
                 build: {
-                    sourcemap: !!transformBooleanStrValue(options.sourcemap),
+                    sourcemap: !!transformBooleanStrValue(options.sourcemap || false),
                     outDir: options.outDir
                 }
             },
