@@ -39,7 +39,7 @@ cli.command("[root]", "开启开发者服务")
                 server: {
                     host: options.host,
                     port: options.port,
-                    open: options.open
+                    open: transformBooleanStrValue(options.open) ?? true
                 }
             },
             "server",
@@ -64,7 +64,7 @@ cli.command("build [root]", "打包构建")
                 command: "build",
                 mode: options.mode,
                 build: {
-                    sourcemap: options.sourcemap,
+                    sourcemap: !!transformBooleanStrValue(options.sourcemap),
                     outDir: options.outDir
                 }
             },
@@ -90,3 +90,12 @@ cli.command("create [name]", "创建项目").action(async (name: string) => {
 cli.help();
 cli.version(version);
 cli.parse();
+
+function transformBooleanStrValue(value: any) {
+    if (value === "false") {
+        return false;
+    } else if (typeof value !== "string" || value === "true") {
+        return true;
+    }
+    return value;
+}
