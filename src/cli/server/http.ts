@@ -145,7 +145,9 @@ export class HttpServer {
                     ? path
                     : `${this.config.https ? "https" : "http"}://${this.hostName?.name}:${this.config.port}${path}`;
 
-                openBrowser(url);
+                if (this.config.open) {
+                    openBrowser(url);
+                }
 
                 //打印可用服务地址
                 this.printServerUrls();
