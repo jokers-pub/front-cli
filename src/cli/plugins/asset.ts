@@ -98,7 +98,7 @@ export function assetPlugin(config: ResolvedConfig): Plugin {
                 let replacementStr =
                     typeof replacement === "string"
                         ? //如果返回的地址，则转换引号
-                          JSON.stringify(replacement).substring(1, -1)
+                          JSON.stringify(replacement).slice(1, -1)
                         : //否则做语法拼接
                           `"+${replacement.runtime}+"`;
 

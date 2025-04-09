@@ -8,7 +8,7 @@ import { Loader, Message, transform, TransformOptions, TransformResult } from "e
 import type { InternalModuleFormat, SourceMap } from "rollup";
 import path from "node:path";
 import { Server } from "../server";
-import { combineSourceMaps, generateCodeFrame, toUpperCaseDriveLetter } from "../utils";
+import { combineSourceMaps, generateCodeFrame, positionToOffset, toUpperCaseDriveLetter } from "../utils";
 import type { RawSourceMap } from "@ampproject/remapping";
 import colors from "picocolors";
 import { HMRType } from "../server/hmr";
@@ -226,7 +226,16 @@ export async function transformWithEsbuild(
             ...result,
             map
         };
-    } catch (e) {
+    } catch (e: any) {
+        if (e.errors) {
+            for (let error of e.errors) {
+                if (error.location) {
+                    logger.error(LOGTAG, `代码转换失败:${error.text} \n${error.location.lineText}`);
+                }
+            }
+            throw e;
+        }
+
         logger.error(LOGTAG, `ESBuild代码转换失败：${file}`);
         throw e;
     }
