@@ -56,6 +56,12 @@ createErrorOverlay(${JSON.stringify(transformError(err)).replace(/</g, "\\u003c"
     }
 
     error404(req: http.IncomingMessage, res: http.ServerResponse) {
+        if (req.url?.startsWith("/.well-known/appspecific/com.chrome.devtools.json")) {
+            res.statusCode = 204;
+            res.end();
+            return;
+        }
+
         res.statusCode = 404;
         res.end();
 

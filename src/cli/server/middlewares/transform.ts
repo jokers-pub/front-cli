@@ -128,7 +128,11 @@ export class TransformMiddleware {
                         map: result.map
                     });
                 } else {
-                    throw new Error("未能正确加载到指定文件:" + url);
+                    if (!res.writableEnded) {
+                        res.statusCode = 404;
+                        res.end();
+                    }
+                    return;
                 }
             } catch (e: any) {
                 //未知名错误，尝试容错处理

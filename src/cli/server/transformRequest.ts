@@ -138,6 +138,7 @@ export class TransformRequester {
                         //交由404处理，不做异常阻断
                         logger.warn(LOGTAG, `${file}文件或目录不存在`);
                     }
+                    return;
                 }
             } else {
                 logger.error(LOGTAG, `${moduleUrl}：超出了项目范围，可配置server.fs.strict=false来关闭检查`);
