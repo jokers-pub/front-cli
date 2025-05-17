@@ -1,6 +1,6 @@
 {
     "name": "@joker.front/cli",
-    "version": "1.1.144",
+    "version": "1.1.145",
     "description": "",
     "scripts": {
         "build-client": "joker_build_library --format=es --sourcemap=false --terser --input=src/client/index.ts --output=client",
@@ -21,10 +21,6 @@
         "dev-server",
         "build-tool"
     ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/jokers-pub/front-cli.git"
-    },
     "homepage": "https://front.jokers.pub/cli/introduction",
     "bin": {
         "joker": "bin/joker.js"
