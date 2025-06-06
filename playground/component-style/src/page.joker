@@ -18,5 +18,15 @@ export default class extends Component {
 <style lang="scss" scoped>
 div {
     background: orange;
+    :deep(.test1) {
+        color: blueviolet;
+    }
+}
+:deep(span) {
+    font-size: 24px;
+
+    button {
+        color: red;
+    }
 }
 </style>

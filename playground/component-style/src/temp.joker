@@ -1,5 +1,6 @@
 <template>
     <span class="test">456</span>
+    <span class="test1">799</span>
 </template>
 <script>
 import { Component } from "@joker.front/core";

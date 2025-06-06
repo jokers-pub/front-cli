@@ -343,7 +343,7 @@ function getPostCssScopedPlugin(id = ""): PostCss.Plugin {
             rule.selector = postcssSelectorParser((selectorRoot) => {
                 selectorRoot.each((selector) => {
                     let node: postcssSelectorParser.Node | undefined = undefined;
-
+                    let isRootDeep = selector.first.type === "pseudo" && selector.first.value === ":deep";
                     selector.each((n) => {
                         if (n.type === "pseudo") {
                             if (n.value === ":deep") {
@@ -384,21 +384,23 @@ function getPostCssScopedPlugin(id = ""): PostCss.Plugin {
                         }
                     });
 
-                    if (node) {
-                        (node as postcssSelectorParser.Node).spaces.after = "";
-                    } else {
-                        selector.first.spaces.before = "";
-                    }
+                    if (!isRootDeep) {
+                        if (node) {
+                            (node as postcssSelectorParser.Node).spaces.after = "";
+                        } else {
+                            selector.first.spaces.before = "";
+                        }
 
-                    selector.insertAfter(
-                        node as any,
-                        postcssSelectorParser.attribute({
-                            attribute: attrId,
-                            value: attrId,
-                            raws: {},
-                            quoteMark: '"'
-                        })
-                    );
+                        selector.insertAfter(
+                            node as any,
+                            postcssSelectorParser.attribute({
+                                attribute: attrId,
+                                value: attrId,
+                                raws: {},
+                                quoteMark: '"'
+                            })
+                        );
+                    }
                 });
             }).processSync(rule.selector);
         },
