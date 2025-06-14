@@ -17,7 +17,7 @@ import fs from "node:fs";
 import { copyDir, emptyDir } from "./utils";
 import { getPkgJson } from "./package";
 import { isEmptyStr } from "@joker.front/shared";
-const LOGTAG = "构建";
+const LOGTAG = "Build";
 
 /**
  * 正在进行中的构建个数，用于在异常时进行逐一进程回收
@@ -27,86 +27,91 @@ let doingBuildCallCounts = 0;
  * 进行中的构建队列
  */
 let doingBuilds: RollupBuild[] = [];
-
 export interface BuildOptions {
     /**
-     * 是否输出
+     * Write bundles to disk
      * @default true
      */
     write?: boolean;
+
     /**
-     * 输出目标模式
+     * Browser compatibility target
      * @default '["es2020", "edge88", "firefox78", "chrome87", "safari13"]'
      */
     target?: TransformOptions["target"];
 
     /**
-     * roolup配置
+     * Customize underlying Rollup configuration
      */
     rollupOptions?: RollupOptions;
 
     /**
-     * 产物输出路径
+     * Output directory for build artifacts
      * @default 'dist'
      */
     outDir?: string;
 
     /**
-     * 是否输出sourcemap
+     * Generate source maps for bundles
      */
     sourcemap?: boolean;
 
     /**
-     * 路径为outDir的相对路径，存放js/css/image构建资产
+     * Directory (relative to outDir) to place generated assets
      * @default 'assets'
      */
     assetsDir?: string;
 
     /**
-     * 资源大小限制，小于限制时，则使用dataUrl方式集成
+     * Inline assets below this size (in bytes) as base64 URLs
      * @default 4096
      */
     assetsInlineLimit?: number;
 
     /**
-     * 是否开启压缩
+     * Minify output
      * @default 'esbuild'
      */
     minify?: boolean | "esbuild" | "terser";
 
     /**
-     * 以libaray模式构建,并可配置模块的引用类型esm、cjs、umd
+     * Library mode options for building packages
      */
     lib?: LibraryOptions | false;
 
     /**
-     * 分包大小限制（警告处理）
+     * Warn when a chunk exceeds this size (in kilobytes)
      * @default 500
      */
     chunkSizeWarningLimit?: number;
 
-    cssTraget?: TransformOptions["target"];
+    /**
+     * CSS transformation target
+     */
+    cssTarget?: TransformOptions["target"];
 
     /**
-     * 是否copy public
+     * Copy files from publicDir to outDir
      * @default true
      */
     copyPublicDir?: boolean;
 
     /**
-     * 静态资源服务地址
+     * Base URL for static asset serving
      */
     publicBaseDir?: string;
 
     /**
-     * worker 编译扩展信息
+     * Options for worker bundles
      */
-    worker?: { rollupOptions?: RollupOptions; plugins?: (input: string) => Promise<RollupPlugin> };
+    worker?: {
+        rollupOptions?: RollupOptions;
+        plugins?: (input: string) => Promise<RollupPlugin>;
+    };
 }
-
 export function resolveBuildOpt(config: Partial<ResolvedConfig>) {
     let resolevd: Required<BuildOptions> = {
-        cssTraget: ESBUILD_MODULES_TARGET,
+        cssTarget: ESBUILD_MODULES_TARGET,
         target: ESBUILD_MODULES_TARGET,
         outDir: "dist",
         write: true,
@@ -174,7 +179,7 @@ export async function build(config: ResolvedConfig): Promise<RollupOutput | Roll
 }
 
 async function doBuild(config: ResolvedConfig): Promise<RollupOutput | RollupOutput[]> {
-    logger.info(LOGTAG, `准备开始进行项目构建:${config.root}`);
+    logger.info(LOGTAG, `Preparing to build project: ${config.root}`);
 
     let { build: options } = config;
     let resolve = (p: string) => path.resolve(config.root, p);
@@ -244,13 +249,13 @@ function initOutDir(config: ResolvedConfig, outDir: string) {
     //只有在需要输出时，才清空
     if (config.build.write && fs.existsSync(outDir)) {
         emptyDir(outDir);
-        logger.debug(LOGTAG, `${outDir}已被清空`);
+        logger.debug(LOGTAG, `${outDir} directory has been cleared`);
     }
 
     //如果存在publicDir，则做copy处理
     if (config.publicDir && fs.existsSync(config.publicDir) && config.build.copyPublicDir) {
         copyDir(config.publicDir, outDir);
-        logger.debug(LOGTAG, `${config.publicDir}已复制到outDir中`);
+        logger.debug(LOGTAG, `${config.publicDir} has been copied to output directory`);
     }
 }
 
@@ -262,7 +267,7 @@ function transformBuildOutputs(
         let formats = lib.formats || ["es", "umd"];
 
         if ((formats.includes("umd") || formats.includes("iife")) && !lib.name) {
-            throw new Error(`lib类型为umd或iife时，必须配置name`);
+            throw new Error("Library name must be configured when using UMD or IIFE output formats");
         }
 
         if (outputs === undefined) {
@@ -270,7 +275,7 @@ function transformBuildOutputs(
         } else if (Array.isArray(outputs) === false) {
             return formats.map((m) => ({ ...outputs, format: m }));
         } else if (lib.formats) {
-            logger.warn(LOGTAG, "在转换outputOption时，对传入的lib.formats进行忽略处理，因为已经配置了output");
+            logger.warn(LOGTAG, "Ignoring lib.formats configuration because output options are explicitly defined");
         }
     }
 
@@ -322,14 +327,14 @@ function transformLibFileName(lib: LibraryOptions, format: ModuleFormat, root: s
 
     let packageJson = getPkgJson(root);
     if (packageJson === undefined) {
-        throw new Error(`在构建时未找到项目的package.json`);
+        throw new Error("Failed to locate project package.json during build process");
     }
 
     let name = lib.fileName || (packageJson.name.startsWith("@") ? packageJson.name.split("/")[1] : packageJson.name);
 
     if (isEmptyStr(name)) {
         throw new Error(
-            `针对lib构建时没有找到解析到实际的name，请检查。可配置lib.fileName，或配置package.json中的name属性`
+            "No valid library name resolved for lib build. Please configure either lib.fileName or package.json#name"
         );
     }
 

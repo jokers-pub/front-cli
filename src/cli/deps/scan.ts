@@ -20,7 +20,7 @@ import fs from "node:fs";
 import { build, Loader, OnLoadResult, Plugin, PluginBuild } from "esbuild";
 import { PluginContainer } from "../server/pluginContainer";
 
-const LOGTAG = "SCAN扫描";
+const LOGTAG = "SCAN";
 
 const VIRTUAL_MODULE_RE = /^virtual-module:.*/;
 const VIRTUAL_MODULE_PRE_FIX = "virtual-module:";
@@ -50,7 +50,7 @@ export async function scanProject(config: ResolvedConfig): Promise<{
         } else if (isObject(buildInput)) {
             entries = Object.values(buildInput).map(resolvePath);
         } else {
-            logger.error(LOGTAG, "rollupOptions.input:接收到错误的类型");
+            logger.error(LOGTAG, "Invalid type provided for rollupOptions.input");
         }
     } else {
         entries = await searchEntries("**/*.html", config);
@@ -62,24 +62,29 @@ export async function scanProject(config: ResolvedConfig): Promise<{
                 if (fs.existsSync(m)) {
                     return m;
                 } else {
-                    logger.error(LOGTAG, `入口扫描：${m} => 文件不存在`);
+                    logger.error(LOGTAG, `Entry scan failed: ${m} => File does not exist`);
                 }
             } else {
-                logger.error(LOGTAG, `入口扫描：${m} => 文件格式不是script或html支持烈性`);
+                logger.error(LOGTAG, `Entry scan failed: ${m} => Unsupported file type (expected script or HTML)`);
             }
             return null;
         })
         .filter(Boolean) as string[];
 
     if (entries.length === 0) {
-        logger.warn(LOGTAG, "未发现匹配的编译入口，将跳过依赖扫描，直接进行下一步操作");
+        logger.warn(LOGTAG, "No matching build entries found. Skipping dependency scan and proceeding to next step.");
         return {
             deps: {},
             missing: {}
         };
     }
 
-    logger.debug(LOGTAG, `完成编译入口的扫描，入口有：${entries.map((m) => prettifyUrl(m, config.root)).join(`\n  `)}`);
+    logger.debug(
+        LOGTAG,
+        `Build entry scan completed. Found ${entries.length} entries:\n  ${entries
+            .map((m) => prettifyUrl(m, config.root))
+            .join("\n  ")}`
+    );
 
     let pluginContainer = new PluginContainer(config);
 
@@ -98,7 +103,7 @@ export async function scanProject(config: ResolvedConfig): Promise<{
             logLevel: "error",
             plugins: [esBuildPlugin]
         }).catch((e) => {
-            logger.error(LOGTAG, `扫描入口：${entry}出现错误：${e.message}`, e);
+            logger.error(LOGTAG, `Error scanning entry ${entry}: ${e.message}`, e);
         });
     });
 

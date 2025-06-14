@@ -36,7 +36,7 @@ export class AsyncWorker<Args extends any[], Ret = any> {
 
     stop() {
         this.pool.forEach((m) => m.unref());
-        this.queue.forEach(([_, reject]) => reject(new Error("主工作程序池已停止.")));
+        this.queue.forEach(([_, reject]) => reject(new Error("Main worker pool has been terminated.")));
         this.pool = [];
         this.idlePool = [];
         this.queue = [];

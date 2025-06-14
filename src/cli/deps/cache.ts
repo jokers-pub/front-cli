@@ -6,7 +6,7 @@ import { DepMetadata } from "./metadata";
 import { ResolvedConfig } from "../config";
 
 const CACHE_FILE_NAME = "_manifest.json";
-const LOGTAG = "DEP缓存";
+const LOGTAG = "DEP Cache";
 
 export class DepCache {
     public cacheDir: string;
@@ -32,14 +32,17 @@ export class DepCache {
         try {
             cache = this.parserCacheFile(cacheFileName);
         } catch (e) {
-            logger.debug(LOGTAG, "解析缓存失败，按没有缓存处理");
+            logger.debug(LOGTAG, "Failed to parse the cache, treating it as no cache available.");
         }
 
         if (cache && cache.hash === configHash) {
             return cache;
         }
 
-        logger.debug(LOGTAG, "cache不存在，或两次hash不一致，不采用");
+        logger.debug(
+            LOGTAG,
+            "The cache does not exist or the hashes from two checks do not match. The cache will not be used."
+        );
 
         //移除失效缓存，在下一次进行更新
         fs.rmSync(this.cacheDir, { recursive: true, force: true });

@@ -33,7 +33,10 @@ export function workerImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
 
                     // potential dynamic template string
                     if (rawUrl[0] === "`" && rawUrl.includes("${")) {
-                        this.error(`\`new URL(url, import.meta.url)\` 在动态模板字符串中不受支持。`, expStart);
+                        this.error(
+                            `'new URL(url, import.meta.url)' is not supported within dynamic template literals.`,
+                            expStart
+                        );
                     }
 
                     s ||= new MagicString(code);
@@ -114,11 +117,7 @@ function parseWorkerOptions(rawOpts: string, optsStartIndex: number): WorkerOpti
     try {
         opts = evalValue<WorkerOptions>(rawOpts);
     } catch {
-        throw err(
-            "Vite is unable to parse the worker options as the value is not static." +
-                "To ignore this error, please use /* @vite-ignore */ in the worker options.",
-            optsStartIndex
-        );
+        throw err("Joker Cli is unable to parse the worker options as the value is not static.", optsStartIndex);
     }
 
     if (!opts) {

@@ -41,6 +41,9 @@ export async function injectSourcesContent(
     );
 
     if (missingSources.length) {
-        logger.debug(LOGTAG, `file:${file}；丢失sources文件，丢失的数据源有：\n     ${missingSources.join("\n  ")}`);
+        logger.debug(
+            LOGTAG,
+            `file:${file}; Missing source files. Missing data sources:\n  ${missingSources.join("\n  ")}`
+        );
     }
 }

@@ -10,10 +10,10 @@ import { copyDir } from "./utils";
 const cli = cac("joker");
 
 //#region 通用配置
-cli.option("--config <file>", "[string]cli配置文件地址")
-    .option("--base <path>", "配置基础地址")
-    .option("--log <leve>", `[silent | error | warn | info | debug]日志输出等级`)
-    .option("--mode <mode>", `[string] 设置环境模式`);
+cli.option("--config <file>", "[string] Path to CLI configuration file")
+    .option("--base <path>", "Configure base URL path")
+    .option("--log <level>", "[silent | error | warn | info | debug] Logging verbosity level")
+    .option("--mode <mode>", "[string] Set environment mode");
 
 type GlobalCliOption = {
     config?: string;
@@ -24,16 +24,16 @@ type GlobalCliOption = {
 //#endregion
 
 //#region 开发者服务
-cli.command("[root]", "开启开发者服务")
-    .option("--host [host]", "[string] 自定义hostname")
-    .option("--port <port>", "[number] 自定义端口")
-    .option("--open [path]", "[boolean | string] 是否默认打开浏览器，可指定自定义地址")
+cli.command("[root]", "Start development server")
+    .option("--host [host]", "[string] Custom hostname")
+    .option("--port <port>", "[number] Custom port number")
+    .option("--open [path]", "[boolean | string] Automatically open browser, optionally specify path")
     .action(async (root: string, options: ServerOptions & GlobalCliOption) => {
         let config = await resolveCliConfig(
             {
                 root: root,
                 base: options.base,
-                logLeve: options.log,
+                logLevel: options.log,
                 mode: options.mode,
                 command: "server",
                 server: {
@@ -52,15 +52,15 @@ cli.command("[root]", "开启开发者服务")
     });
 //#endregion
 
-cli.command("build [root]", "打包构建")
-    .option("--outDir <dir>", `[string] 产物输出目录，默认为dist`)
-    .option("--sourcemap", `[boolean] 是否输出sourcemap文件，默认为false`)
+cli.command("build [root]", "Build project for production")
+    .option("--outDir <dir>", "[string] Output directory for build artifacts (default: dist)")
+    .option("--sourcemap", "[boolean] Generate sourcemap files (default: false)")
     .action(async (root: string, options: BuildOptions & GlobalCliOption) => {
         let config = await resolveCliConfig(
             {
                 root: root,
                 base: options.base,
-                logLeve: options.log,
+                logLevel: options.log,
                 command: "build",
                 mode: options.mode,
                 build: {
@@ -75,18 +75,18 @@ cli.command("build [root]", "打包构建")
         await build(config);
     });
 
-cli.command("create [name]", "创建项目").action(async (name: string) => {
-    let cwdPath = process.cwd();
-    let aimDir = path.join(cwdPath, name);
-    fs.mkdirSync(aimDir);
+cli.command("create [name]", "Create a new project").action(async (name) => {
+    const cwdPath = process.cwd();
+    const targetDir = path.join(cwdPath, name);
 
-    let templatePath = path.join(__dirname, "../template");
+    fs.mkdirSync(targetDir);
 
-    copyDir(templatePath, aimDir);
+    const templatePath = path.join(__dirname, "../template");
 
-    console.log("创建完成，请自行安装依赖，建议使用pnpm安装依赖。");
+    await copyDir(templatePath, targetDir);
+
+    console.log("Project created successfully. Please install dependencies manually. It is recommended to use pnpm.");
 });
-
 cli.help();
 cli.version(version);
 cli.parse();

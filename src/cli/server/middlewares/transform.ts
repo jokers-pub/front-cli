@@ -25,7 +25,7 @@ import { ERR_OUTDATED_RESOLVED_DEP, ERR_RESOLVE_DEP_PROCESSING_ERROR } from "../
 import { HMRType, parserHMRError } from "../hmr";
 //空指向 ｜｜ 图标（转static中间件处理）
 const IG_FILE_LIST = new Set(["/", "/favicon.ico"]);
-const LOGTAG = "请求转换";
+const LOGTAG = "Request Transformation";
 
 /**
  * 文件转换服务中间件，负责处理所有请求文件的编译、依赖采集
@@ -33,7 +33,7 @@ const LOGTAG = "请求转换";
 export class TransformMiddleware {
     constructor(protected server: Server) {
         this.server.httpServer.app.use(this.exec.bind(this));
-        logger.debug(LOGTAG, `Trasnform初始化完成，这是所有文件转换器的入口`);
+        logger.debug(LOGTAG, `Transformer initialized. This is the entry point for all file transformers`);
     }
 
     async exec(req: IncomingMessage, res: ServerResponse, next: NextFunction): Promise<void> {
@@ -46,7 +46,7 @@ export class TransformMiddleware {
 
         let cleanedUrl = cleanUrl(url);
 
-        logger.debug(LOGTAG, `接收到一次请求：${cleanedUrl}=>${req.url}`);
+        logger.debug(LOGTAG, `Request received: ${cleanedUrl} => ${req.url}`);
 
         if (cleanedUrl.endsWith(".map")) {
             await this.execMapFile(url, req, res, next);
@@ -73,14 +73,14 @@ export class TransformMiddleware {
 
                     logger.warn(
                         LOGTAG,
-                        `${realPath}:该资源在public文件夹内，不应该存在使用import进行引用，请将该文件存放在src开发目录下。`
+                        `${realPath}: This resource is located within the public directory and should not be referenced using imports. Please move this file to the src development directory.`
                     );
                 } else {
                     logger.warn(
                         LOGTAG,
-                        `检测到一个文件请求，请求路径中存在publicDir路径，请使用${colors.cyan(
+                        `A file request was detected containing the publicDir path in the request URL. Please use ${colors.cyan(
                             url.replace(publicPath, "/")
-                        )}替换现在的${colors.cyan(url)}`
+                        )} instead of the current ${colors.cyan(url)}`
                     );
                 }
             }
@@ -105,7 +105,7 @@ export class TransformMiddleware {
                 ifNoneMatch &&
                 (await this.server.moduleMap.getModuleByUrl(url))?.transformResult?.etag === ifNoneMatch
             ) {
-                logger.debug(LOGTAG, `${url}没有发生变化，使用缓存304`);
+                logger.debug(LOGTAG, `${url} unchanged, using cached 304 response`);
                 res.statusCode = 304;
                 res.end();
                 return;
@@ -157,7 +157,7 @@ export class TransformMiddleware {
                     return;
                 }
 
-                logger.error(LOGTAG, "转换失败", e);
+                logger.error(LOGTAG, "Transformation failed", e);
 
                 this.server.socketServer.send(new HMRType.Error(parserHMRError(e)));
 

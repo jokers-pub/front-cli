@@ -185,7 +185,7 @@ export function resolvePlugin(option: InternalResolveOptions, config: ResolvedCo
                 if (pathFromBaseDir.startsWith("/node_modules")) {
                     logger.warn(
                         LOGTAG,
-                        `${normalizeFsPath}:不建议直接引用node_modules里面的任何资源，请采用包的模式进行引用;`
+                        `${normalizeFsPath}: Directly referencing any resources inside node_modules is not recommended. Please use the package import pattern instead.`
                     );
 
                     let bareImport = pathFromBaseDir.slice("/node_modules/".length);
@@ -647,7 +647,7 @@ function resolvePackageEntry(
         }
     }
 
-    throw new Error(logger.error(LOGTAG, `解析package：${id}失败，没有找到合适的入口`));
+    throw new Error(logger.error(LOGTAG, `Failed to resolve package: ${id}. No suitable entry point found.`));
 }
 
 function resolveDeepImport(id: string, packageData: PackageData, options: InternalResolveOptions): string | undefined {
@@ -674,7 +674,7 @@ function resolveDeepImport(id: string, packageData: PackageData, options: Intern
         }
 
         if (!relativeId) {
-            throw new Error(`package.json 中 exports 没有找到定义的${relativeId}`);
+            throw new Error(`The defined ${relativeId} was not found in the "exports" field of package.json.`);
         }
     } else if (isObject(packageData.data.browser)) {
         let { file, postfix } = splitFileAndPostfix(relativeId);

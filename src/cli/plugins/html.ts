@@ -86,7 +86,7 @@ export function htmlInlineProxyPlugin(config: ResolvedConfig): Plugin {
                     return result;
                 }
 
-                throw new Error(logger.error(LOGTAG, `${id}:未匹配到代理缓存`));
+                throw new Error(logger.error(LOGTAG, `${id}: Proxy cache not found`));
             }
         }
     };
@@ -188,7 +188,10 @@ export function htmlBuildPlugin(config: ResolvedConfig): Plugin {
                         someScriptAreAsync ||= scriptInfo.async;
                         someScriptAreDefer ||= !scriptInfo.async;
                     } else if (url && isPublicFile === false && isExcludedUrl(url) === false) {
-                        logger.warn(LOGTAG, `<script src="${url}">未编译，如想纳入构建编译，请使用type='module'`);
+                        logger.warn(
+                            LOGTAG,
+                            `<script src="${url}"> is not compiled. To include it in the build process, please use type='module'.`
+                        );
                     }
                 }
 
@@ -275,7 +278,7 @@ export function htmlBuildPlugin(config: ResolvedConfig): Plugin {
             if (someScriptAreAsync && someScriptAreDefer) {
                 logger.warn(
                     LOGTAG,
-                    `在收集${id}依赖时，发现存在defer以及async类型的脚本引用，本次构建将统一采用async进行入口引用，请将所有脚本的引用方式保持统一。`
+                    `While collecting dependencies for ${id}, found script references with both defer and async attributes. This build will uniformly use async for entry references. Please ensure all script references are consistent.`
                 );
             }
 
@@ -321,7 +324,10 @@ export function htmlBuildPlugin(config: ResolvedConfig): Plugin {
             let jsStr = js.join("\n");
             for (let { start, end, url, resolved } of resolvedStyleUrl) {
                 if (resolved === undefined || resolved === null) {
-                    logger.warn(LOGTAG, `${url}:在构建时未找到，进行忽略处理，以便在运行时按需解析`);
+                    logger.warn(
+                        LOGTAG,
+                        `${url}: Not found during build time, ignoring to resolve on demand during runtime.`
+                    );
 
                     let removeText = `import ${JSON.stringify(url)}`;
 
@@ -470,7 +476,7 @@ export function htmlBuildPlugin(config: ResolvedConfig): Plugin {
                     let cssTransformoCode = HTML_PROXY_RESULT.get(scopedName);
 
                     if (cssTransformoCode === undefined) {
-                        logger.error(LOGTAG, `在解析inline-css时，数据丢失：${id}:${scopedName}`);
+                        logger.error(LOGTAG, `Data loss occurred while parsing inline CSS: ${id}:${scopedName}`);
                         continue;
                     }
 

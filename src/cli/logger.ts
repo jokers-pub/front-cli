@@ -7,7 +7,7 @@ export namespace logger {
      */
     export type leve = "silent" | "error" | "warn" | "info" | "debug";
 
-    export let logLeve: leve = "info";
+    export let logLevel: leve = "info";
 
     //时间戳
     function getTimer(): string {
@@ -38,7 +38,7 @@ export namespace logger {
      * @param content
      */
     function writeLog(type: leve, tagName: string, message: string) {
-        if (loggerLeve.indexOf(type) <= loggerLeve.indexOf(logLeve)) {
+        if (loggerLeve.indexOf(type) <= loggerLeve.indexOf(logLevel)) {
             let str = `${color.dim(getTimer())} `;
 
             switch (type) {

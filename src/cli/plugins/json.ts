@@ -27,7 +27,7 @@ export function jsonPlugin(): Plugin {
 
                 let position = errorMessageList && parseInt(errorMessageList[0], 10);
 
-                this.error(`JSON文件解析失败。${position ? `错误行：${position}` : ""}`, e.idx);
+                this.error(`JSON file parsing failed. ${position ? `Error line: ${position}` : ""}`, e.idx);
             }
         }
     };

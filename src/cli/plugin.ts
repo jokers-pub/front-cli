@@ -4,38 +4,37 @@ import { Server } from "./server";
 import { HMRContext } from "./server/hmr";
 import { ModuleNode } from "./server/moduleMap";
 import { IndexHtmlTransform } from "./utils/html";
-
 export interface Plugin extends RollupPlugin {
     /**
-     * 执行顺序
-     * prev前置预处理
-     * post构建后处理
+     * Execution order
+     * - pre: Execute before core processing
+     * - post: Execute after core processing
      */
     enforce?: "pre" | "post";
 
     /**
-     * 触发场景，空代表全部执行
+     * Specify execution context. Empty means all contexts.
      */
     apply?: Config["command"] | "all";
 
     /**
-     * 配置server把柄
+     * Hook for configuring the development server
      */
     configureServer?: (server: Server) => void | Promise<void>;
 
     /**
-     * 配置文件转换
+     * Transform configuration before processing
      */
     configTransform?: (config: ResolvedConfig) => Promise<void> | void;
 
     /**
-     * 首页html转换Hook方法
-     * 可通过该钩子实现：注入入口脚本等等
+     * Transform index.html before serving
+     * Use this hook to inject scripts, modify meta tags, etc.
      */
     indexHtmlTransform?: IndexHtmlTransform;
 
     /**
-     * 扩展rollup中的options，添加scan属性
+     * Extend Rollup's resolveId hook with additional scanning options
      */
     resolveId?: (
         this: PluginContext,
@@ -45,9 +44,8 @@ export interface Plugin extends RollupPlugin {
     ) => Promise<ResolveIdResult> | ResolveIdResult;
 
     /**
-     * 热更新模块Update上下文
-     * 可以通过该hook实现对modules等属性的更新
-     * @param ctx
+     * HMR update handler
+     * Modify module graph or perform custom updates during hot reload
      */
     hmrUpdate?(ctx: HMRContext, server: Server): ModuleNode[] | void | Promise<ModuleNode[] | void>;
 }

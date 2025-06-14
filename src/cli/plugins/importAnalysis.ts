@@ -61,7 +61,7 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
             let root = normalizePath(config.root);
             let importLogUrl = prettifyUrl(importer, root);
             if (importer === clientEntryFile || notNeedImportAnalysis(importer)) {
-                logger.debug(LOGTAG, `出入口外无引用，跳过：${importLogUrl}`);
+                logger.debug(LOGTAG, `No references outside import/export points, skipping:${importLogUrl}`);
                 return;
             }
 
@@ -75,8 +75,12 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
             try {
                 [imports, exports] = parseImports(source);
             } catch (e: any) {
-                logger.error(LOGTAG, `${importLogUrl}:解析代码中的imports、exports失败，可能是缺少对应的解析插件`, e);
-                this.error(`解析代码中的imports、exports失败`, e.idx);
+                logger.error(
+                    LOGTAG,
+                    `${importLogUrl}: Failed to parse imports/exports in the code. A corresponding parsing plugin might be missing.`,
+                    e
+                );
+                this.error(`Failed to parse imports/exports in the code`, e.idx);
             }
 
             let importerModule = server.moduleMap.getModuleById(importer);
@@ -91,13 +95,13 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
 
             //该判断条件只做容错，按流程该插件是在最后执行，依赖入口应该已经都被解析
             if (importerModule === undefined) {
-                logger.error(LOGTAG, `${importLogUrl}没有在moduleMap找到映射数据`);
+                logger.error(LOGTAG, `${importLogUrl}: Mapping data not found in moduleMap`);
                 return;
             }
 
             if (imports.length === 0) {
                 importerModule.isSelfAccepting = false;
-                logger.debug(LOGTAG, `${importLogUrl}没有imports，跳过`);
+                logger.debug(LOGTAG, `${importLogUrl} has no imports, skipping`);
                 return;
             }
 
@@ -110,7 +114,10 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
                     return this.error(
                         logger.error(
                             LOGTAG,
-                            `解析import ${url} from ${path.relative(process.cwd(), importer)}失败，请确认文件是否存在`
+                            `Failed to parse import ${url} from ${path.relative(
+                                process.cwd(),
+                                importer
+                            )}. Please verify the file exists.`
                         )
                     );
                 }
@@ -125,7 +132,10 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
                 else if (resolved.id.startsWith(config.depHandler.depCache.cacheDirPrefix)) {
                     url = path.posix.join(FS_PREFIX + resolved.id);
                 } else if (fs.existsSync(cleanUrl(resolved.id))) {
-                    logger.debug(LOGTAG, `${url}引用 -> ${resolved.id}超出了root目录范围，请及时调整`);
+                    logger.debug(
+                        LOGTAG,
+                        `The reference ${url} -> ${resolved.id} exceeds the root directory scope. Please adjust it promptly.`
+                    );
 
                     url = path.posix.join(FS_PREFIX + resolved.id);
                 } else {
@@ -251,7 +261,7 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
                         throw new Error(
                             logger.error(
                                 LOGTAG,
-                                `${specifier}不允许引用publicDir目录下面的JS/CSS等其他非资源非JSON类型的文件`
+                                `${specifier} is not allowed to reference non-resource and non-JSON files (such as JS/CSS) under the publicDir directory.`
                             )
                         );
                     }
@@ -271,10 +281,10 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
 
                             if (needsRewrite === undefined) {
                                 if (file.match(/-[A-Z0-9]{8}\.js/) === null) {
-                                    logger.error(LOGTAG, `${url}该文件的DepInfo有误`);
+                                    logger.error(LOGTAG, `${url}: The DepInfo of this file is incorrect`);
                                 }
                             } else if (needsRewrite) {
-                                logger.debug(LOGTAG, `${url} 需要转换import方式`);
+                                logger.debug(LOGTAG, `${url} requires conversion of import style`);
                                 rewriteNamedImports(str(), imports[index], url, index);
                                 rewriteDone = true;
                             }
@@ -304,7 +314,7 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
                     }
                 } else if (importer.startsWith(normalizePath(CLIENT_DIR)) === false) {
                     if (NODE_MODULES_RE.test(importer) === false) {
-                        let warnMessage = `${importerModule.file}无法支持import解析：\n${generateCodeFrame(
+                        let warnMessage = `${importerModule.file} does not support import parsing:\n${generateCodeFrame(
                             source,
                             start
                         )}`;
@@ -387,7 +397,7 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
                     hmrPruned(noLongerImported, server);
                 }
 
-                logger.debug(LOGTAG, `从${importLogUrl}中重写了${importedUrls.size}个import`);
+                logger.debug(LOGTAG, `Rewrote ${importedUrls.size} imports from ${importLogUrl}`);
             }
 
             if (s) {

@@ -15,7 +15,7 @@ export class SpaMiddleware {
         //URL重写
         this.server.httpServer.app.use(this.urlRewrite.bind(this));
 
-        logger.debug(LOGTAG, "spa单页面处理中间件初始化完成");
+        logger.debug(LOGTAG, "SPA Single Page Application Middleware initialized");
     }
 
     urlRewrite(req: any, res: any, next: NextFunction) {
@@ -29,11 +29,14 @@ export class SpaMiddleware {
 
                         let fileRelPath = path.join(self.server.config.root || "", rePath);
                         if (fs.existsSync(fileRelPath) === false) {
-                            logger.debug(LOGTAG, `未找到对应的${fileRelPath}将按照默认地址重定向：${rePath}`);
+                            logger.debug(
+                                LOGTAG,
+                                `Corresponding ${fileRelPath} not found, redirecting to default address: ${rePath}`
+                            );
                             rePath = "/index.html";
                         }
 
-                        logger.debug(LOGTAG, `地址重定向：${rePath}`);
+                        logger.debug(LOGTAG, `Address redirected: ${rePath}`);
                         return rePath;
                     }
                 }

@@ -7,7 +7,7 @@ import path from "node:path";
 import { logger } from "../logger";
 import { OutputChunk } from "rollup";
 
-const LOGTAG = "输出报告";
+const LOGTAG = "Reports";
 
 export function buildReporterPlugin(config: ResolvedConfig): Plugin {
     let compress = promisify(gzip);
@@ -16,9 +16,10 @@ export function buildReporterPlugin(config: ResolvedConfig): Plugin {
     let chunkCount = 0;
 
     async function getCompressedSize(code: string | Uint8Array): Promise<string> {
-        return ` / gizp: ${(
-            (await compress(typeof code === "string" ? code : Buffer.from(code))).length / 1024
-        ).toFixed(2)} KiB`;
+        return ` / gizp: ${
+            //@ts-ignore
+            ((await compress(typeof code === "string" ? code : Buffer.from(code))).length / 1024).toFixed(2)
+        } KiB`;
     }
 
     function printFileInfo(filePath: string, content: string | Uint8Array, maxLength: number, compressedSize = "") {
@@ -36,7 +37,7 @@ export function buildReporterPlugin(config: ResolvedConfig): Plugin {
             transformedCount++;
         },
         buildEnd() {
-            logger.info(LOGTAG, `共转换${transformedCount}个模块`);
+            logger.info(LOGTAG, `A total of ${transformedCount} modules were converted.`);
         },
         renderStart() {
             chunkCount = 0;
@@ -92,7 +93,7 @@ export function buildReporterPlugin(config: ResolvedConfig): Plugin {
             if (config.build.minify && !config.build.lib && hasLargeChunks) {
                 logger.warn(
                     LOGTAG,
-                    `在构建输出时，输出文件超出了${chunkLimit}的大小限制，请做合理的拆分，或者通过配置config.build.chunkSizeWarningLimit进行自定义配置大小警告阀值`
+                    `During the build output process, the output file exceeded the size limit of ${chunkLimit}. Please perform reasonable splitting or customize the size warning threshold via the configuration option config.build.chunkSizeWarningLimit.`
                 );
             }
         }

@@ -63,7 +63,7 @@ export function assetPlugin(config: ResolvedConfig): Plugin {
                 try {
                     fileContent = await fsp.readFile(file, "utf-8");
                 } catch (e) {
-                    logger.error(LOGTAG, `raw读取文件流失败：${file}`);
+                    logger.error(LOGTAG, `Failed to read file stream in raw mode: ${file}`);
                 }
                 return `export default ${JSON.stringify(fileContent)}`;
             }
@@ -256,7 +256,7 @@ export function assetFilenamesToFilename(
     }
 
     if (typeof assetFileNames !== "string") {
-        throw new Error(logger.error(LOGTAG, `assetFileNames没有返回string类型的结果`));
+        throw new Error(logger.error(LOGTAG, `assetFileNames did not return a string value`));
     }
 
     let filename = assetFileNames.replace(/\[\w+\]/g, (placeholder: string): string => {
@@ -272,7 +272,10 @@ export function assetFilenamesToFilename(
         }
 
         throw new Error(
-            logger.error(LOGTAG, `assFileNames在转换特殊标记时，从${assetFileNames}中发现未识别标记${placeholder}`)
+            logger.error(
+                LOGTAG,
+                `assetFileNames encountered unrecognized token ${placeholder} while processing special tokens in ${assetFileNames}`
+            )
         );
     });
 

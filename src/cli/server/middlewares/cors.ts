@@ -2,7 +2,7 @@ import { Server } from "..";
 import corsMiddleware from "cors";
 import { logger } from "../../logger";
 
-const LOGTAG = "跨域中间件";
+const LOGTAG = "CORS Middleware";
 /**
  * cors 跨域处理中间件
  */
@@ -15,7 +15,7 @@ export class CorsMiddleware {
                 )
             );
 
-            logger.debug(LOGTAG, "已完成初始化");
+            logger.debug(LOGTAG, "Initialization completed");
         }
     }
 }

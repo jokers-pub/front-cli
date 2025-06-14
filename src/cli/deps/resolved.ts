@@ -121,7 +121,10 @@ async function resolveDep(
                 (<any[]>rollupOptionsExternal).some((ext) => typeof ext !== "string")
             ) {
                 throw new Error(
-                    logger.error(LOGTAG, "构建（build）时，发现配置中存在external，但是其配置的数据不符合要求，请检查")
+                    logger.error(
+                        LOGTAG,
+                        "Invalid 'external' configuration detected during build. Please check your build configuration."
+                    )
                 );
             }
 
@@ -212,7 +215,7 @@ async function resolveDep(
 
     depHandler.depCache.writeCache(metadata, processingCacheDir);
 
-    logger.debug(LOGTAG, `解析依赖，并加入缓存中，耗时：${(performance.now() - start).toFixed(2)}ms`);
+    logger.debug(LOGTAG, `Dependency parsing and caching completed in ${(performance.now() - start).toFixed(2)}ms`);
 }
 
 export interface ResolveDepMetadataResult {
@@ -261,7 +264,7 @@ export async function getExportDatas(file: string): Promise<ExportDatas> {
         parserResult = parse(fileContent);
     } catch {
         throw new Error(
-            logger.error(LOGTAG, `${file}:获取该文件的imort、export时，解析失败，可能因为该文件类型暂不支持`)
+            logger.error(LOGTAG, `Failed to parse imports/exports in ${file}. This file type may not be supported.`)
         );
     }
 

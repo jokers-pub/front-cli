@@ -14,13 +14,13 @@ export class OpenEditorMiddleware {
             const { file } = url.parse(req.url || "", true).query || {};
             if (!file) {
                 res.statusCode = 500;
-                res.end(`缺失file地址，无法打开目标文件`);
+                res.end(`Missing file address, unable to open target file`);
             } else {
                 launch(file);
                 res.end();
             }
         });
 
-        logger.debug(LOGTAG, "打开编辑器服务中间件初始化完成");
+        logger.debug(LOGTAG, "Editor Service Middleware initialization completed");
     }
 }

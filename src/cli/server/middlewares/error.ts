@@ -5,7 +5,7 @@ import { logger } from "../../logger";
 import { clearnStack } from "../../utils";
 import { HMRType, parserHMRError } from "../hmr";
 
-const LOGTAG = "错误处理中间件";
+const LOGTAG = "Error Middleware";
 //引用https://github.com/chalk/strip-ansi
 function strip(str: string) {
     const pattern = [
@@ -31,7 +31,7 @@ export class ErrorMiddleware {
         this.server.httpServer.app.use(this.error404.bind(this));
 
         this.server.httpServer.app.use(this.errorMain.bind(this));
-        logger.debug(LOGTAG, "已完成404、异常捕获初始化");
+        logger.debug(LOGTAG, "404 and exception handling initialization completed");
     }
 
     errorMain(err: any, req: http.IncomingMessage, res: http.ServerResponse, next: NextFunction): void {
@@ -66,7 +66,7 @@ createErrorOverlay(${JSON.stringify(transformError(err)).replace(/</g, "\\u003c"
         res.end();
 
         if (req.url?.endsWith("/favicon.ico") === false) {
-            logger.error(LOGTAG, req.url + "当前链接未找到资源，返回404状态");
+            logger.error(LOGTAG, req.url + " resource not found, returning 404 status");
         }
     }
 }

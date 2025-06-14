@@ -80,10 +80,10 @@ export class Server {
 
     constructor(public config: ResolvedConfig) {
         this.httpServer = new HttpServer(this.config.server, this.config.base);
-        logger.debug(LOGTAG, "httpServer初始化完成");
+        logger.debug(LOGTAG, "HTTP server initialized successfully");
 
         this.socketServer = new SocketServer(this.config.server);
-        logger.debug(LOGTAG, "socket建立完成");
+        logger.debug(LOGTAG, "WebSocket server established successfully");
 
         this.watcher = chokidar.watch(this.config.root, {
             ignored: ["**/.vscode/**", "**/.git/**", "**/node_modules/**"],
@@ -91,24 +91,24 @@ export class Server {
             ignorePermissionErrors: true,
             disableGlobbing: true
         });
-        logger.debug(LOGTAG, "文件监听初始化完毕,共监听了");
+        logger.debug(LOGTAG, "File watcher initialized");
 
         this.pluginContainer = new PluginContainer(this.config);
-        logger.debug(LOGTAG, "plugin运行容器已经初始化");
+        logger.debug(LOGTAG, "Plugin runtime container initialized");
 
         this.transformRequester = new TransformRequester(this);
-        logger.debug(LOGTAG, "请求转换处理程序已初始化完毕");
+        logger.debug(LOGTAG, "Request transformation handler initialized successfully");
 
         this.moduleMap = new ModuleMap(this, (id: string) => this.pluginContainer.resolveId(id, undefined, {}));
-        logger.debug(LOGTAG, "module依赖收集功能已建立");
+        logger.debug(LOGTAG, "Module dependency collection system initialized");
 
         //初始化事件
         this.initHandler();
-        logger.debug(LOGTAG, "公共事件注册完成");
+        logger.debug(LOGTAG, "Public event registration completed");
 
         //初始化中间件
         this.initMiddleware();
-        logger.debug(LOGTAG, "中间件初始化完毕");
+        logger.debug(LOGTAG, "Middleware initialized successfully");
 
         this.config.depHandler.server = this;
     }

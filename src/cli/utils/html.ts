@@ -4,13 +4,13 @@ import { Server } from "../server";
 import { Plugin } from "../plugin";
 import { OutputBundle, OutputChunk } from "rollup";
 import { ResolvedConfig } from "../config";
-const LOGTAG = "HTML转换";
+const LOGTAG = "HTML Transformation";
 
 export function parserHtml(html: string): RootNode {
     let astParser = new TemplateParser(html, {
         keepComment: false,
         onWarn(msg, content) {
-            logger.warn(LOGTAG, `AST模板转换警告：${msg};${JSON.stringify(content)}`);
+            logger.warn(LOGTAG, `AST template transformation warning: ${msg}; ${JSON.stringify(content)}`);
         }
     });
 
@@ -182,9 +182,8 @@ export function injectToHtmlHead(content: string, tags: HtmlTagDescriptor[], pre
     //不做任何容错机制
     logger.error(
         LOGTAG,
-        "未成功注入Tags，没有找到任何符合的位置，将按照原文输出；位置：head；tags:" + JSON.stringify(tags)
+        `Failed to inject tags. No valid insertion point found in <head>. Tags: ${JSON.stringify(tags)}`
     );
-
     return content;
 }
 
@@ -209,7 +208,7 @@ function injectToHtmlBody(content: string, tags: HtmlTagDescriptor[], pre: boole
         //不做任何容错机制
         logger.error(
             LOGTAG,
-            "未成功注入Tags，没有找到任何符合的位置，将按照原文输出；位置：body；tags:" + JSON.stringify(tags)
+            `Failed to inject tags. No valid insertion point found in <body>. Tags: ${JSON.stringify(tags)}`
         );
     } else {
         if (bodyInjectRE.test(content)) {

@@ -32,7 +32,8 @@ export async function scanProjectDependencies(config: ResolvedConfig): Promise<R
     if (missingIds.length) {
         logger.error(
             LOGTAG,
-            `在扫描项目入口依赖时，发现有丢失的引用，请确保这些引用是否已经正确的加载：\n\n${missingIds.join("\n  ")}`
+            `During dependency scanning of the project entry point, missing references were detected. Please ensure these dependencies are correctly installed and loaded:
+${missingIds.join("\n ")}`
         );
     }
 
@@ -131,7 +132,7 @@ export class DepHandler {
             this.isInitByCache = true;
             this.depMetadata = cachedMetadata;
 
-            logger.debug(LOGTAG, `存在dep缓存，采取缓存模式`);
+            logger.debug(LOGTAG, `Dependency cache detected. Using cached version.`);
         } else {
             this.depMetadata = new DepMetadata(this.configHash);
         }
@@ -142,7 +143,7 @@ export class DepHandler {
     public async init() {
         //项目依赖采集要在server开始前完成，不采用后置方案
         if (!this.isInitByCache && this.config.command === "server") {
-            logger.debug(LOGTAG, `DEV模式，无Cache，将进行首次项目扫描初始化`);
+            logger.debug(LOGTAG, `DEV mode detected. No cache found. Initializing full project scan...`);
 
             this.currentProcessing = true;
 
@@ -154,15 +155,15 @@ export class DepHandler {
             //并通过process promise模式进行状态管理
             //确保整个项目扫描放在server的启动后执行
             setTimeout(async () => {
-                logger.debug(LOGTAG, "开始执行项目依赖收集扫描");
+                logger.debug(LOGTAG, "Starting project dependency collection and scanning...");
 
                 let deps = await scanProjectDependencies(this.config);
                 let depsKeys = Object.keys(deps);
                 logger.debug(
                     LOGTAG,
                     depsKeys.length
-                        ? `扫描当前项目发现${depsKeys.length}个引用：${depsKeys.join(",")}`
-                        : "扫描当前项目入口未找到任何依赖引用"
+                        ? `Project scan complete: Found ${depsKeys.length} dependencies: ${depsKeys.join(", ")}`
+                        : `Project scan complete: No dependencies found in the entry point.`
                 );
 
                 //由于数据可能来自cache，所以要去查找差异，并添新的引用
@@ -391,7 +392,7 @@ export class DepHandler {
     }
 
     private async onQueueEnd() {
-        logger.debug(LOGTAG, "dep 异步加载队列执行完成");
+        logger.debug(LOGTAG, "Dependency async loading queue execution completed.");
 
         if (this.firstEnded) return;
 
@@ -413,7 +414,7 @@ export class DepHandler {
             let scanDeps = Object.keys(result.metadata.resolved);
 
             if (scanDeps.length === 0 && deps.length === 0) {
-                logger.debug(LOGTAG, "没有扫描到任何引用需要进行解析。");
+                logger.debug(LOGTAG, "No references found that require parsing.");
 
                 result.cancel();
                 this.firstEnded = true;
@@ -443,22 +444,22 @@ export class DepHandler {
                 }
 
                 if (depDiff) {
-                    logger.debug(LOGTAG, "在结束循环时，发现新的引用");
+                    logger.debug(LOGTAG, "New references discovered at the end of the loop.");
                 }
 
-                logger.debug(LOGTAG, "开始重新进行引用扫描");
+                logger.debug(LOGTAG, "Initiating a new reference scan...");
 
                 this.debouncedRestart(0);
             } else {
                 //当前扫描结果可以被解析使用
-                logger.debug(LOGTAG, `当前扫描结果可以被使用，未发现失效和丢失的索引`);
+                logger.debug(LOGTAG, `The current scan results are valid. No invalid or missing indices found.`);
 
                 this.startNextDiscoveredBatch();
                 this.runResolve(result);
             }
         } else {
             if (deps.length === 0) {
-                logger.debug(LOGTAG, `扫描结束，未发现任何dep索引`);
+                logger.debug(LOGTAG, `Scan complete. No dependency indices found.`);
                 this.firstEnded = true;
             } else {
                 this.debouncedRestart(0);
@@ -486,7 +487,7 @@ export class DepHandler {
                  */
                 result.push(dep);
 
-                logger.debug(LOGTAG, "查询到一处重写标记不一致的dep：" + dep);
+                logger.debug(LOGTAG, "Found a dependency with inconsistent override markers: " + dep);
             }
         }
 
@@ -563,7 +564,7 @@ export class DepHandler {
             this.enqueueRerun = () => {
                 let deps = Object.keys(this.depMetadata.discovered);
 
-                logger.debug(LOGTAG, `准备重启，发现${deps.length}个新的引用`);
+                logger.debug(LOGTAG, `Preparing for restart. Detected ${deps.length} new references.`);
 
                 this.runResolve();
             };
@@ -628,18 +629,17 @@ export class DepHandler {
                 if (this.findNewDep) {
                     processingResult.cancel();
 
-                    logger.debug(LOGTAG, `延迟reload，因为在异步解析时，发现了新的引用`);
+                    logger.debug(LOGTAG, `Reload delayed due to new references detected during asynchronous parsing.`);
                 } else {
                     await this.commitProcessing(processingResult, needReload);
 
-                    logger.debug(LOGTAG, "由于引用发生改变，正在进行重载");
+                    logger.debug(LOGTAG, "Reloading in progress due to changes in references.");
 
                     if (needInteropMismatch.length) {
                         logger.debug(
                             LOGTAG,
-                            `从引用中发现混合ESM/CJS的使用：包含：\n${needInteropMismatch.join(
-                                ","
-                            )}\n，将在重载时添加他们以保证快速的冷启动`
+                            `Detected mixed ESM/CJS usage in references: \n${needInteropMismatch.join(", ")}\n` +
+                                `These will be injected during reload to ensure fast cold starts`
                         );
                     }
 
@@ -648,10 +648,10 @@ export class DepHandler {
             } else {
                 await this.commitProcessing(processingResult, needReload);
 
-                logger.debug(LOGTAG, `deps已完成解析优化，并且没有发生改变`);
+                logger.debug(LOGTAG, `Dependencies have been parsed and optimized with no changes detected.`);
             }
         } catch (e: any) {
-            logger.error(LOGTAG, `在完成解析deps时，发生异常：${e.message}\n${e.stack}`);
+            logger.error(LOGTAG, `Failed to parse dependencies: ${e.message}\n${e.stack}`);
 
             this.resolveEnqueuedProcessingPromises();
 

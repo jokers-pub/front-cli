@@ -15,7 +15,7 @@ import { CSSOptions } from "./plugins/css";
 export const DEFAULT_SERVER_PORT = 5858;
 export const DEFAULT_WS_PORT = 25679;
 
-const LOGTAG = "配置文件";
+const LOGTAG = "Config";
 
 export const FILE_SUFFIX = "joker";
 
@@ -37,87 +37,90 @@ export const { version } = JSON.parse(readFileSync(packagePath).toString());
 export const ESBUILD_MODULES_TARGET = ["es2020", "edge88", "firefox78", "chrome87", "safari13"];
 export const DEFAULT_EXTENSIONS = [".js", "mjs", "mts", ".ts", ".json"];
 export const DEFAULT_MAIN_FIELDS = ["browser", "module", "jsnext:main", "jsnext"];
-
 export interface Config {
     /**
-     * 项目文根
+     * Project root directory
      * @default process.cwd()
      */
     root?: string;
+
     /**
-     * 输出运行时公共文根
+     * Public base path when serving in production
      * @default '/'
      */
     base?: string;
 
     /**
-     * 运行模式
-     * server服务一定是起服务，不做构建
-     * build 只做构建，一定不做服务代理
+     * Execution mode
+     * - 'server': Run development server only
+     * - 'build': Build project without starting server
      * @default 'server'
      */
     command?: "server" | "build";
 
     /**
-     * 对应process.env.NODE_ENV
+     * Environment mode (corresponds to process.env.NODE_ENV)
      * @default 'development'
      */
     mode?: string;
 
     /**
-     * 开发模式下的Server配置
+     * Development server configuration
      */
     server?: ServerOptions;
+
     /**
-     * 构建配置（Server+Build模式下文件构建配置）
+     * Build configuration
      */
     build?: BuildOptions;
+
     /**
-     * 定义缓存目录，存放dep依赖缓存等文件
-     * 默认为package.json所在文件夹下的node_modules/.joker
-     *
+     * Cache directory for dependencies and intermediate files
      * @default 'node_modules/.joker'
      */
     cacheDir?: string;
+
     /**
-     * 默认文件夹，可以配置static静态文件、公共脚本、公共资源等路径文件夹
-     * 此文件内的资源不会被转换编译，仅在build时复制到dist目录下
-     * 配置成false代表不启用public
-     *
+     * Public directory for static assets that are copied directly to output
+     * Set to false to disable
      * @default 'public'
      */
     publicDir?: string | false;
+
     /**
-     * 日志输出等级
+     * Logging level
      * @default 'info'
      */
-    logLeve?: logger.leve;
+    logLevel?: logger.leve;
+
     /**
-     * 是否采用esbuild
-     * @default 'true'
+     * Enable esbuild for faster builds
+     * @default true
      */
     esbuild?: boolean;
+
     /**
-     * 需要额外处理的资源，默认已经支持大部分资源格式
+     * Additional file extensions to treat as assets
      */
     assetsInclude?: string[];
+
     /**
-     * 插件
+     * Plugins to extend the build system
      */
     plugins?: Plugin[] | Array<Plugin[]>;
 
     /**
-     * 配置解析器
+     * Module resolution options
      */
     resolve?: ResolveOptions;
 
     /**
-     * 全局定义，在开发侧通过import.meta.define.xxx进行使用
+     * Global definitions available in source code via import.meta.define
      */
     define?: Record<string, any>;
 
     /**
-     * CSS配置
+     * CSS processing options
      */
     css?: CSSOptions;
 }
@@ -169,7 +172,7 @@ export async function resolveCliConfig(
 
             result.configPath = resolvePath;
 
-            logger.debug(LOGTAG, `发现配置文件:${resolvePath}`);
+            logger.debug(LOGTAG, `Configuration file found: ${resolvePath}`);
         }
     }
     for (let name in cliConfig) {
@@ -193,11 +196,11 @@ export async function resolveCliConfig(
 
     result.esbuild ??= true;
 
-    result.logLeve ??= "info";
+    result.logLevel ??= "info";
 
     result.define ??= {};
 
-    logger.logLeve = result.logLeve;
+    logger.logLevel = result.logLevel;
 
     result.base ??= "/";
 
@@ -227,7 +230,10 @@ export async function resolveCliConfig(
     let pkgPath = lookupFile(result.root, "package.json", true);
 
     if (pkgPath === undefined) {
-        logger.warn(LOGTAG, "未在root目录及上级目录中找到package.json，存在异常风险，部分功能按降级方案处理");
+        logger.warn(
+            LOGTAG,
+            "Failed to locate package.json in project root or parent directories. This may cause unexpected behavior. Some features will be downgraded."
+        );
     }
 
     result.pkgPath = pkgPath;
@@ -277,7 +283,7 @@ export async function resolveCliConfig(
     //由于dep 关系是具有缓存优化的，而缓存是依赖于config的hash，所以直接挂载到config中
     result.depHandler = new DepHandler(result as ResolvedConfig);
 
-    logger.debug(LOGTAG, "开始执行自定义插件的config转换周期");
+    logger.debug(LOGTAG, "Starting configuration transformation cycle for custom plugins");
 
     for (let plugin of result.plugins) {
         if (plugin.configTransform) {
@@ -285,7 +291,7 @@ export async function resolveCliConfig(
         }
     }
 
-    logger.debug(LOGTAG, "完成配置文件整合");
+    logger.debug(LOGTAG, "Configuration file integration completed");
 
     return result as ResolvedConfig;
 }

@@ -39,9 +39,8 @@ import type { RawSourceMap } from "@ampproject/remapping";
 import MagicString from "magic-string";
 import { ResolvedConfig } from "../config";
 import { ModuleMap } from "./moduleMap";
-import { browserExternalId } from "../plugins/resolve";
 
-const LOGTAG = "插件容器";
+const LOGTAG = "Plugin Container";
 
 export class PluginContainer {
     private readonly plugins: Plugin[];
@@ -129,7 +128,7 @@ export class PluginContainer {
 
                         logger.error(
                             LOGTAG,
-                            `获取ModuleInfo中${key}失败，在server模式下，moduleInfo不具备此属性相关能力`
+                            `Failed to retrieve ${key} from ModuleInfo. This property is not supported in server mode.`
                         );
                     }
                 }
@@ -199,7 +198,7 @@ export class PluginContainer {
 
             logger.debug(
                 LOGTAG,
-                "resolveID被" + plugin.name + "触发：" + id + " => " + prettifyUrl(resultId, this.config.root)
+                `resolveID triggered by ${plugin.name}: ${id} => ${prettifyUrl(resultId, this.config.root)}`
             );
             break;
         }
@@ -254,7 +253,10 @@ export class PluginContainer {
                     this.updateModuleInfo(id, result as any);
                 }
 
-                logger.debug(LOGTAG, `${prettifyUrl(id, this.config.root)}文件被${plugin.name}执行了load`);
+                logger.debug(
+                    LOGTAG,
+                    `Load hook executed on ${prettifyUrl(id, this.config.root)} by plugin ${plugin.name}`
+                );
 
                 return result;
             }
@@ -546,7 +548,7 @@ export class RollupPluginContext
     private warnTip(funName: string) {
         logger.warn(
             `[plugin:${this.plugin?.name || ""}]`,
-            `context上下文实例中不支持在server模式下调用${funName},已按空处理`
+            `Calling ${funName} on context instance is not supported in server mode. Operation ignored.`
         );
     }
     //#endregion

@@ -35,7 +35,7 @@ export class IndexHtmlMiddleware {
         //indexhtml 内容重构
         this.server.httpServer.app.use(this.indexHtml.bind(this));
 
-        logger.debug(LOGTAG, "IndexHtml处理中间件初始化完成");
+        logger.debug(LOGTAG, "IndexHtml Processing Middleware initialized");
     }
 
     async indexHtml(req: http.IncomingMessage, res: http.ServerResponse, next: NextFunction) {

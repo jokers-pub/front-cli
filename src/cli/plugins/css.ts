@@ -178,7 +178,7 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
                 name: cssAssetName,
                 originalFileName: cssAssetName,
                 type: "asset",
-                source: `/* joker 内部调用，忽略即可 */`
+                source: `/* Internal call for joker, can be ignored */`
             })
         );
     };

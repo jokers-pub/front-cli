@@ -538,7 +538,10 @@ export function openBrowser(url: string) {
         let extraArgs = process.argv.slice(2);
         crossSpawn(process.execPath, [browser, ...extraArgs, url], { stdio: "inherit" }).on("close", (code) => {
             if (code !== 0) {
-                logger.error("浏览器", "打开浏览器时，运行特殊脚本场景失败，脚本地址为：" + browser);
+                logger.error(
+                    "Browser",
+                    `Failed to execute special script when launching browser. Script path: ${browser}`
+                );
             }
         });
     } else if (browser.toLowerCase() !== "none") {
@@ -551,7 +554,10 @@ export function openBrowser(url: string) {
                 });
                 return;
             } catch (e) {
-                logger.debug("浏览器", "使用ps cax未启动浏览器，将采用默认方式");
+                logger.debug(
+                    "Browser",
+                    "Failed to detect running browser via 'ps cax'. Falling back to default launch method."
+                );
             }
         }
 
@@ -563,7 +569,7 @@ export function openBrowser(url: string) {
             open(url, browser ? { app: { name: browser } } : {}).catch(() => {});
         } catch (e) {}
     } else {
-        logger.error("浏览器", "打开浏览器失败，识别process.env.browser为none");
+        logger.error("Browser", `Failed to launch browser. Detected process.env.browser value: "none"`);
     }
 }
 //#endregion
@@ -578,7 +584,7 @@ export function readJSON(filePath: string): any {
     try {
         return JSON.parse(fs.readFileSync(filePath, "utf-8"));
     } catch {
-        logger.debug(LOGTAG, `readJSON方法读取/解析文件失败：${filePath}`);
+        logger.debug(LOGTAG, `Failed to read/parse file via readJSON method: ${filePath}`);
         return {};
     }
 }
@@ -757,7 +763,7 @@ export function offsetToPosition(
         let lines = source.split(LINE_RE);
 
         if (offset > source.length) {
-            logger.error(LOGTAG, "offsetToPosition:索引超出文档长度");
+            logger.error(LOGTAG, "offsetToPosition: Character offset exceeds document length");
             return {
                 column: 0,
                 line: lines.length

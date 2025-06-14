@@ -30,10 +30,10 @@ export class SocketServer {
             this.wsOption.host = hmrOption.host || undefined;
 
             this.wss = new WebSocketServer(this.wsOption);
-            logger.debug(LOGTAG, `ws创建完毕:${JSON.stringify(this.wsOption)}`);
+            logger.debug(LOGTAG, `WebSocket created: ${JSON.stringify(this.wsOption)}`);
         } else {
             this.wss = new WebSocketServer({ noServer: true });
-            logger.warn(LOGTAG, `未开启hmr，则采用无服务ws作为中间处理`);
+            logger.warn(LOGTAG, "HMR disabled, using standalone WebSocket middleware");
         }
         this.initHandler();
     }
@@ -106,9 +106,11 @@ export class SocketServer {
         this.wss.on("error", (e: Error & { code: string }) => {
             if (e.code === "EADDRINUSE") {
                 if (this.customPort) {
-                    throw new Error(`ws端口${this.wsOption.port}被占用，可以通过配置config.hmr.port来修改热更新端口`);
+                    throw new Error(
+                        `WebSocket port ${this.wsOption.port} is already in use. Configure config.hmr.port to change the HMR port.`
+                    );
                 }
-                logger.debug(LOGTAG, `ws端口${this.wsOption.port}被占用，正在尝试使用其他端口启动服务`);
+                logger.debug(LOGTAG, `WebSocket port ${this.wsOption.port} is occupied. Trying alternative ports...`);
 
                 this.wss.removeAllListeners();
                 this.wss.close(() => {
@@ -118,7 +120,7 @@ export class SocketServer {
                     this.initHandler();
                 });
             } else {
-                logger.error(LOGTAG, `ws发生错误：\n${e.stack || e.message}`);
+                logger.error(LOGTAG, `WebSocket error:\n${e.stack || e.message}`);
             }
         });
     }

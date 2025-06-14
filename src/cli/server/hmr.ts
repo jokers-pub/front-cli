@@ -221,11 +221,14 @@ export async function hmrUpdate(file: string, server: Server): Promise<void> {
     let isConfigFile = file === server.config.configPath;
 
     if (isConfigFile) {
-        logger.warn(LOGTAG, `CLI配置文件发生变更，请手动进行重启`);
+        logger.warn(LOGTAG, `CLI configuration file has changed, please restart manually`);
         return;
     }
 
-    logger.debug(LOGTAG, `${prettifyUrl(file, server.config.root)}发生变更，准备通过WS进行通知更新`);
+    logger.debug(
+        LOGTAG,
+        `${prettifyUrl(file, server.config.root)} has changed, preparing to notify update via WebSocket`
+    );
 
     //如果clinet发生变更时处理，正常不会存在该场景，本判断为了CLI开发存在
     if (file.startsWith(normalizePath(CLIENT_DIR))) {
@@ -235,7 +238,7 @@ export async function hmrUpdate(file: string, server: Server): Promise<void> {
 
     if (file.endsWith(".html")) {
         let htmlPath = "/" + getHMRRelativePath(file, server.config.root);
-        logger.debug(LOGTAG, `html:${htmlPath}发生变更，触发reload`);
+        logger.debug(LOGTAG, `html:${htmlPath} changed, triggering reload`);
 
         server.socketServer.send(new HMRType.Reload(htmlPath));
         return;
@@ -312,7 +315,10 @@ export function updateModules(ctx: HMRContext) {
     }
 
     if (fullReload) {
-        logger.info(LOGTAG, `在更新模块时，存在依赖终点或中断异常，需要页面重载来进行热更新操作`);
+        logger.info(
+            LOGTAG,
+            `Dependency endpoint or interruption exception detected during module update. Full page reload required for hot update.`
+        );
 
         ctx.server.socketServer.send(new HMRType.Reload("*"));
         return;
@@ -320,7 +326,7 @@ export function updateModules(ctx: HMRContext) {
 
     if (updates.length) {
         updates.forEach((u) => {
-            logger.info(LOGTAG, `热更新文件：${u.path}`);
+            logger.info(LOGTAG, `Hot updating file: ${u.path}`);
         });
 
         ctx.server.socketServer.send(new HMRType.Update(updates));
@@ -503,7 +509,10 @@ function getHMRRelativePath(file: string, root: string): string {
 
 function acceptError(pos: number): never {
     let err = new Error(
-        logger.error(LOGTAG, `import.meta.hot.accept()只能接受字符串或者数组，不支持动态变量`)
+        logger.error(
+            LOGTAG,
+            `import.meta.hot.accept() only accepts strings or arrays. Dynamic variables are not supported.`
+        )
     ) as RollupError;
 
     err.pos = pos;

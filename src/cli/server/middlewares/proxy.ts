@@ -29,7 +29,7 @@ export class ProxyMiddleware {
 
             this.devServer.httpServer.app.use(this.exec.bind(this));
 
-            logger.debug(LOGTAG, "proxy代理服务中间件初始化完成");
+            logger.debug(LOGTAG, "Proxy Service Middleware initialization completed");
         }
     }
 
@@ -49,14 +49,14 @@ export class ProxyMiddleware {
                 let res = originalRes as http.ServerResponse | net.Socket;
 
                 if ("req" in res) {
-                    logger.error(LOGTAG, `代理请求发生错误`, err);
+                    logger.error(LOGTAG, `Proxy request error occurred`, err);
 
                     if (!res.writableEnded) {
                         // eslint-disable-next-line @typescript-eslint/naming-convention
                         res.writeHead(500, { "Content-Type": "text/plain" }).end();
                     }
                 } else {
-                    logger.error(LOGTAG, `WS代理发生错误`, err);
+                    logger.error(LOGTAG, `WebSocket proxy error occurred`, err);
 
                     res.end();
                 }
@@ -81,7 +81,7 @@ export class ProxyMiddleware {
                             req.url = opt.rewrite(url);
                         }
 
-                        logger.debug(LOGTAG, `代理请求重定向:${req.url} -> ws ${opt.target}`);
+                        logger.debug(LOGTAG, `Proxy request redirected: ${req.url} -> ws ${opt.target}`);
 
                         proxy.ws(req, socket, head);
                         return;

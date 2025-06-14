@@ -1,13 +1,9 @@
-import MagicString from "magic-string";
 import { ResolvedConfig } from "../config";
 import { Plugin } from "../plugin";
-import { addUrlQuery, isCssRequest, isInNodeModules, isJSRequest, normalizePath } from "../utils";
-import { parse as parseImports } from "es-module-lexer";
-import path from "node:path";
-import { cleanUrl, getUrlQueryParams, logger } from "@joker.front/shared";
+import { isCssRequest, isInNodeModules } from "../utils";
+import { cleanUrl, logger } from "@joker.front/shared";
 import { GetModuleInfo, ManualChunkMeta } from "rollup";
 
-const DYNAMIC_IMPORT_DIR = "joker_dir";
 const LOGTAG = "Joker_manualChunks";
 
 let staticImportedCache = new Map<string, boolean>();
@@ -42,7 +38,7 @@ export function manualChunksPlugin(config: ResolvedConfig): Plugin {
                             } else {
                                 logger.warn(
                                     LOGTAG,
-                                    `manualChunks指定为对象类型，Joker无法安全的进行融合转换，建议使用Function去配置该属性，这样可以保留Joker提供的import()异步文件路径输出以及vendor包拆分等逻辑。`
+                                    `manualChunks is specified as an object type. Joker cannot perform fusion conversion safely. It is recommended to use a Function to configure this property to retain logic such as import() asynchronous file path output and vendor package splitting provided by Joker.`
                                 );
                             }
                         } else {

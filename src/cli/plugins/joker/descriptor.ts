@@ -29,7 +29,7 @@ export function getSFCDescriptor(
         try {
             return parserSFCFile(config, filename, fs.readFileSync(filename, "utf-8"));
         } catch (e: any) {
-            throw new Error(logger.error(LOGTAG, `转换${filename}=》SFC失败`, e));
+            throw new Error(logger.error(LOGTAG, `Failed to convert ${filename} to SFC`, e));
         }
     }
 }

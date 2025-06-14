@@ -33,7 +33,7 @@ import glob from "fast-glob";
 import { formatMessages, transform } from "esbuild";
 import { StringOptions } from "sass";
 
-const LOGTAG = "CSS工具";
+const LOGTAG = "CSS-TOOLS";
 
 export const CSS_MODULE_RE = new RegExp(`\\.module${CSS_LANG}`);
 
@@ -74,7 +74,7 @@ export async function compileCSS(
     let lang = (id.match(CSS_LANG_RE)?.[1] as CSSLang) || (id.match(SHIMS_CSS_LANG_RE)?.[2] as CSSLang);
 
     if (!lang) {
-        logger.error(LOGTAG, `未从${id}中解析出样式语言`);
+        logger.error(LOGTAG, `Failed to detect style language from ${id}`);
         return { code: "" };
     }
 
@@ -168,7 +168,10 @@ export async function compileCSS(
                 let importer = declaration.source?.input.file;
 
                 if (!importer && hasWarn === false) {
-                    logger.warn(LOGTAG, "postcss插件在执行时，没有传入确定的importer，这将导致不确定的引用关系。");
+                    logger.warn(
+                        LOGTAG,
+                        "PostCSS plugin executed without specifying an importer. This may result in undefined reference resolution."
+                    );
                     hasWarn = true;
                 }
 
@@ -304,7 +307,7 @@ async function resolvePostcssConfig(config: ResolvedConfig): Promise<PostCssConf
         cacheResult = await loadPostcssConfig({}, config.root);
     } catch (e: any) {
         if (e.message.includes("No PostCSS Config found") === false) {
-            throw new Error(logger.error(LOGTAG, `解析postcss配置文件出现问题，请核查`, e));
+            throw new Error(`[${LOGTAG}] Error parsing PostCSS configuration. Please verify your configuration.`);
         }
 
         cacheResult = undefined;
@@ -363,7 +366,10 @@ function getPostCssScopedPlugin(id = ""): PostCss.Plugin {
                                     }
                                     selector.removeChild(n);
                                 } else {
-                                    logger.warn(LOGTAG, `解析Scoped时，发现:deep()样式透传无参数，请检查`);
+                                    logger.warn(
+                                        LOGTAG,
+                                        `Found :deep() pseudo-class without arguments while parsing scoped styles. Please check your CSS.`
+                                    );
 
                                     let prev = selector.at(selector.index(n) - 1);
 
@@ -449,13 +455,6 @@ const enum PREPROCESS_LAN {
     less = "less",
     sass = "sass",
     scss = "scss"
-}
-
-/**
- * 纯净CSS文件
- */
-const enum PURECSS_LAN {
-    css = "css"
 }
 
 type CSSLang = "css" | "less" | "sass" | "scss";
@@ -727,10 +726,14 @@ async function loadPreprocessor(lang: PREPROCESS_LAN, root: string): Promise<any
     } catch (e: any) {
         if (e.code === "ERR_MODULE_NOT_FOUND") {
             throw new Error(
-                logger.error(LOGTAG, `样式预处理程序包： "${lang}" 没有找到，请确定是否正确的安装了该依赖。`)
+                logger.error(
+                    LOGTAG,
+                    `Style preprocessor package "${lang}" not found. Please ensure it is installed correctly.`
+                )
             );
         } else {
-            const message = new Error(logger.error(LOGTAG, `样式预处理程序包 "${lang}" 加载失败:\n${e.message}`));
+            // 修正：提取错误信息构建Error对象，避免传递logger返回值
+            const message = new Error(`[${LOGTAG}] Failed to load style preprocessor "${lang}": ${e.message}`);
             message.stack = e.stack + "\n" + message.stack;
             throw message;
         }
@@ -979,14 +982,14 @@ function createCSSResolvers(config: ResolvedConfig): CSSAtImportResolvers {
 export async function minifyCss(css: string, config: ResolvedConfig): Promise<string> {
     try {
         let { code, warnings } = await transform(css, {
-            target: config.build.cssTraget,
+            target: config.build.cssTarget,
             loader: "css",
             minify: true
         });
 
         if (warnings.length) {
             let msg = await formatMessages(warnings, { kind: "warning" });
-            logger.warn(LOGTAG, `CSS压缩出现警告：\n${msg.join("\n")}`);
+            logger.warn(LOGTAG, `CSS minification warnings:\n${msg.join("\n")}`);
         }
         return code;
     } catch (e: any) {

@@ -54,7 +54,7 @@ export function esbuildPlugin(config: ResolvedConfig): Plugin {
 
                 if (result.warnings.length) {
                     result.warnings.forEach((m) => {
-                        logger.warn(LOGTAG, `ESBuild:transform警告：${file}\n${prettifyMessage(m, code)}`);
+                        logger.warn(LOGTAG, `ESBuild:transform：${file}\n${prettifyMessage(m, code)}`);
                     });
                 }
 
@@ -156,7 +156,7 @@ export async function transformWithEsbuild(
         } else if (ext === "cjs" || ext === "mjs" || ext === "js") {
             loader = "js";
         } else {
-            logger.warn(LOGTAG, `${ext}未制定loader，采用后缀编译`);
+            logger.warn(LOGTAG, `${ext} has no loader specified, using suffix-based compilation`);
             loader = ext as Loader;
         }
     }
@@ -230,13 +230,13 @@ export async function transformWithEsbuild(
         if (e.errors) {
             for (let error of e.errors) {
                 if (error.location) {
-                    logger.error(LOGTAG, `代码转换失败:${error.text} \n${error.location.lineText}`);
+                    logger.error(LOGTAG, `Code transformation failed:${error.text} \n${error.location.lineText}`);
                 }
             }
             throw e;
         }
 
-        logger.error(LOGTAG, `ESBuild代码转换失败：${file}`);
+        logger.error(LOGTAG, `ESBuild code transformation failed:${file}`);
         throw e;
     }
 }
@@ -250,12 +250,12 @@ let tsconfckParserOptions: TSConfckParseOptions = {
 async function initTsConfCk(config: ResolvedConfig) {
     let workspaceRoot = searchForWorkspaceRoot(config.root);
 
-    logger.debug(LOGTAG, `初始化tsConfig查询程序，workspace目录：${workspaceRoot}`);
+    logger.debug(LOGTAG, `Initializing tsConfig query program, workspace directory:${workspaceRoot}`);
 
     tsconfckParserOptions.cache?.clear();
     tsconfckParserOptions.root = workspaceRoot;
 
-    logger.debug(LOGTAG, "tsconfig查询程序完成");
+    logger.debug(LOGTAG, "tsConfig query program completed");
 }
 
 async function loadTsconfigJsonForFile(file: string): Promise<TSConfigJSON> {
@@ -282,7 +282,7 @@ function reloadOnTsconfigChange(changedFile: string) {
         (path.basename(changedFile) === "tsconfig.json" ||
             (changedFile.endsWith(".json") && tsconfckParserOptions.cache?.hasParseResult(changedFile)))
     ) {
-        logger.info(LOGTAG, `检测到tsconfig配置文件变动，需要触发reload`);
+        logger.info(LOGTAG, `tsconfig configuration file changes detected, reload triggered`);
 
         server.moduleMap.disposeAllModule();
 

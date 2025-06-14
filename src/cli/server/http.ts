@@ -116,11 +116,14 @@ export class HttpServer {
                 //网络地址使用错误
                 if (e.code === "EADDRINUSE") {
                     if (this.customPort) {
-                        logger.error(LOGTAG, `端口${this.config.port}已被占用，请修改port属性`);
+                        logger.error(
+                            LOGTAG,
+                            `Port ${this.config.port} is already in use. Please modify the port property.`
+                        );
                         this.server.removeListener("error", onStartError);
                         reject(e.code);
                     } else {
-                        logger.debug(LOGTAG, `端口${this.config.port}已被占用，正在尝试其他端口`);
+                        logger.debug(LOGTAG, `Port ${this.config.port} is occupied, attempting to use another port`);
                         this.config.port!++;
                         this.server.listen(this.config.port, this.hostName?.host);
                     }
@@ -152,7 +155,7 @@ export class HttpServer {
                 //打印可用服务地址
                 this.printServerUrls();
 
-                logger.debug(LOGTAG, `服务已启动${url}`);
+                logger.debug(LOGTAG, `Service started at ${url}`);
             });
         });
     }
@@ -255,7 +258,7 @@ export class HttpServer {
 
     public printServerUrls() {
         if (this.resolveUrls.local.length === 0 && this.resolveUrls.network.length === 0) {
-            logger.error(LOGTAG, "未找到任何可用的服务地址，Server端可能未正常启动");
+            logger.error(LOGTAG, "No available service address found. The server may not have started correctly.");
             return;
         }
 
@@ -264,19 +267,19 @@ export class HttpServer {
         };
 
         for (let url of this.resolveUrls.local) {
-            logger.info(LOGTAG, `${colors.green("➡️")}   ${colors.bold("本地：")}    ${printColor(url)}`);
+            logger.info(LOGTAG, `${colors.green("➡️")}   ${colors.bold("Local:")}    ${printColor(url)}`);
         }
 
         for (let url of this.resolveUrls.network) {
-            logger.info(LOGTAG, `${colors.green("➡️")}   ${colors.bold("网络：")}    ${printColor(url)}`);
+            logger.info(LOGTAG, `${colors.green("➡️")}   ${colors.bold("Network:")}    ${printColor(url)}`);
         }
 
         if (this.resolveUrls.network.length === 0 && this.config.host === undefined) {
             logger.info(
                 LOGTAG,
-                `${colors.dim("➡️")}   ${colors.bold("网络：")}    未明确host，可以通过${colors.white(
+                `${colors.dim("➡️")}   ${colors.bold("Network:")}    Host not specified. Configure with ${colors.white(
                     colors.bold("--host")
-                )}进行配置`
+                )}`
             );
         }
     }

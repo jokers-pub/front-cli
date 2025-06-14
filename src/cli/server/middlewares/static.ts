@@ -17,14 +17,14 @@ import { cleanUrl } from "@joker.front/shared";
 import path from "node:path";
 import { FS_PREFIX } from "../../config";
 import { logger } from "../../logger";
-const LOGTAG = "静态服务中间件";
+const LOGTAG = "Static Server Middleware";
 function sirvOptions(headers?: OutgoingHttpHeaders) {
     return {
         dev: true,
         etag: true,
         extensions: [],
         onNoMatch: (req: IncomingMessage, res: ServerResponse) => {
-            logger.warn(LOGTAG, `${req.url}资源未匹配`);
+            logger.warn(LOGTAG, `${req.url} resource not matched`);
         },
         setHeaders: (res: ServerResponse, pathname: string) => {
             //如果是ts/js时
@@ -52,7 +52,7 @@ export class PublicMiddleware {
 
             this.server.httpServer.app.use(this.exec.bind(this));
 
-            logger.debug(LOGTAG, "公共资源服务中间件初始化成功");
+            logger.debug(LOGTAG, "Public Resource Service Middleware initialized successfully");
         }
     }
     exec(req: IncomingMessage, res: ServerResponse, next: NextFunction): void {
@@ -73,7 +73,7 @@ export class StaticMiddleware {
 
         this.server.httpServer.app.use(this.exec.bind(this));
 
-        logger.debug(LOGTAG, "静态资源服务初始化成功");
+        logger.debug(LOGTAG, "Static Resource Service initialized successfully");
     }
     exec(req: IncomingMessage, res: ServerResponse, next: NextFunction): void {
         let cleanedUrl = cleanUrl(req.url!);
@@ -108,7 +108,7 @@ export class RawFsMiddleware {
 
         this.server.httpServer.app.use(this.exec.bind(this));
 
-        logger.debug(LOGTAG, "FS中间件处理初始化成功");
+        logger.debug(LOGTAG, "FS Middleware processing initialized successfully");
     }
 
     exec(req: IncomingMessage, res: ServerResponse, next: NextFunction): void {
@@ -161,9 +161,11 @@ function ensureServingAccess(url: string, server: Server, res: ServerResponse, n
 
     if (getFileStat(cleanUrl(url))) {
         let warnMessage = [
-            `该请求：${url}，超过了允许范围，请检查！`,
-            `目前配置允许的请求范围包括：${server.config.server.fs?.allow?.map((i) => i).join(",")}`,
-            `如果想允许该资源请求，可以通过配置fs.strict或者fs.allow属性来进行精细控制`
+            `The request: ${url} exceeds the allowed scope, please check!`,
+            `Currently configured allowed request scopes include: ${server.config.server.fs?.allow
+                ?.map((i) => i)
+                .join(",")}`,
+            `If you want to allow this resource request, you can configure the fs.strict or fs.allow properties for fine-grained control`
         ].join("\n");
 
         logger.warn(LOGTAG, warnMessage);
@@ -180,7 +182,7 @@ function ensureServingAccess(url: string, server: Server, res: ServerResponse, n
 }
 
 function renderRestrictedErrorHtml(msg: string): string {
-    return `<body><h1>403受限访问</h1><p>${msg.replace(
+    return `<body><h1>403 Forbidden</h1><p>${msg.replace(
         /\n/g,
         "<br/>"
     )}</p><style>body{padding:1em 2em;}</style></body>`;

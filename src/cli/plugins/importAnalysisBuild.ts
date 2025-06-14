@@ -79,7 +79,10 @@ export function importAnalysisBuildPlugin(config: ResolvedConfig): Plugin {
                     return this.error(
                         logger.error(
                             LOGTAG,
-                            `解析import ${url} from ${path.relative(process.cwd(), importer)}失败，请确认文件是否存在`
+                            `Failed to parse import ${url} from ${path.relative(
+                                process.cwd(),
+                                importer
+                            )}. Please verify the file exists.`
                         )
                     );
                 }
@@ -148,10 +151,10 @@ export function importAnalysisBuildPlugin(config: ResolvedConfig): Plugin {
 
                             if (needsRewrite === undefined) {
                                 if (file.match(/-[A-Z0-9]{8}\.js/) === null) {
-                                    logger.error(LOGTAG, `${url}该文件的DepInfo有误`);
+                                    logger.error(LOGTAG, `${url}: Incorrect DepInfo for this file`);
                                 }
                             } else if (needsRewrite) {
-                                logger.debug(LOGTAG, `${url} 需要转换import方式`);
+                                logger.debug(LOGTAG, `${url} needs to convert the import method`);
                                 rewriteNamedImports(str(), imports[index], url, index);
                                 rewriteDone = true;
                             }
@@ -467,7 +470,7 @@ async function preload(baseModule: () => Promise<any>, deps?: string[], importUr
                     return new Promise((resolve, reject) => {
                         link.addEventListener("load", resolve);
                         link.addEventListener("error", () => {
-                            reject(new Error(`加载CSS失败：${dep}`));
+                            reject(new Error(`Failed to load CSS: ${dep}`));
                         });
                     });
                 }

@@ -69,12 +69,12 @@ class SocketService {
             try {
                 this.socket = new WebSocket(`${socketProtocol}://${socketHost}`, "joker-hmr");
             } catch (e: any) {
-                logger.error("websocket 连接失败");
+                logger.error("WebSocket connection failed");
             }
 
             this.initEventListener();
         } else {
-            logger.warn("HMR未开启，降级处理，只做功能降级补偿");
+            logger.warn("HMR is disabled. Applying fallback mode with feature degradation compensation only");
         }
     }
 
@@ -94,8 +94,7 @@ class SocketService {
         this.socket?.addEventListener("close", async ({ wasClean }) => {
             if (wasClean) return;
 
-            logger.info("连接服务丢失，正在尝试重新连接...");
-
+            logger.info("Connection to server lost. Attempting to reconnect...");
             await this.waitingToConnect();
 
             location.reload();
@@ -105,7 +104,7 @@ class SocketService {
     private receiveMessage(hmr: IHMRType.All) {
         switch (hmr.type) {
             case "connected":
-                logger.info("服务已连接");
+                logger.info("Server connection established");
                 this.sendMessages();
 
                 setInterval(() => {
@@ -163,12 +162,14 @@ class SocketService {
             case "error":
                 this.notify("error", hmr);
 
-                logger.error(`发现错误：\n${hmr.err.message}\n${hmr.err.stack}`);
+                logger.error(`Error detected:\n${hmr.err.message}\n${hmr.err.stack}`);
 
                 createErrorOverlay(hmr.err);
                 break;
             default:
-                logger.warn(`发现未知类型的HMR，可能因为CLI和CLIENT版本不一致造成的`);
+                logger.warn(
+                    `Unknown HMR type detected. This might be caused by version mismatch between CLI and client`
+                );
                 break;
         }
     }
@@ -222,9 +223,11 @@ class SocketService {
             //先挂新的link，等待加载完毕或者失败时，删除原始link
             el.after(newLinkTag);
 
-            logger.info(`CSS文件${searchUrl}已被更新`);
+            logger.info(`CSS file ${searchUrl} has been updated`);
         } else {
-            logger.warn(`服务通知需要更新${searchUrl}，但未在DOM中查询到该Link，未作更新`);
+            logger.warn(
+                `Server requested update for ${searchUrl}, but corresponding link not found in DOM. Update skipped.`
+            );
         }
     }
 
@@ -281,7 +284,7 @@ class SocketService {
                         moduleMap.set(dep, newModule);
                     } catch (err: any) {
                         logger.error(
-                            `请求${path}失败，这可能是由于语法错误或导入不存在的模块导致的。（参见控制台的错误）,尝试重载修复热更新失败问题，倒计时2秒`,
+                            `Request to ${path} failed. This could be due to syntax errors or importing non-existent modules. (See console for details). Attempting to reload to fix HMR failure in 2 seconds.`,
                             err
                         );
 
@@ -297,9 +300,9 @@ class SocketService {
                     cb.fn(cb.deps.map((dep) => moduleMap.get(dep)));
                 }
 
-                let prettyUrl = isSelfUpdate ? update.path : `${update.acceptedPath} 通过 ${update.path} 触发更新`;
+                let prettyUrl = isSelfUpdate ? update.path : `${update.acceptedPath} updated via ${update.path}`;
 
-                logger.info(`热更新完成：${prettyUrl}`);
+                logger.info(`Hot update completed: ${prettyUrl}`);
             };
         };
 

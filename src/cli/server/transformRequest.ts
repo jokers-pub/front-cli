@@ -8,7 +8,7 @@ import { isFileServingAllowed } from "./middlewares/static";
 import { promises as fsp } from "node:fs";
 import { cleanUrl } from "@joker.front/shared";
 
-const LOGTAG = "请求转换";
+const LOGTAG = "Request Transformation";
 
 export interface TransformResult {
     code: string;
@@ -130,18 +130,24 @@ export class TransformRequester {
                 try {
                     code = await fsp.readFile(file, "utf-8");
 
-                    logger.debug(LOGTAG, `${prettifyUrl(file, this.server.config.root)}执行load无插件接管，使用fs模式`);
+                    logger.debug(
+                        LOGTAG,
+                        `No plugin handled load for ${prettifyUrl(file, this.server.config.root)}, using fs mode`
+                    );
                 } catch (e: any) {
                     if (e.code !== "ENOENT") {
                         throw e;
                     } else {
                         //交由404处理，不做异常阻断
-                        logger.warn(LOGTAG, `${file}文件或目录不存在`);
+                        logger.warn(LOGTAG, `File or directory ${file} does not exist`);
                     }
                     return;
                 }
             } else {
-                logger.error(LOGTAG, `${moduleUrl}：超出了项目范围，可配置server.fs.strict=false来关闭检查`);
+                logger.error(
+                    LOGTAG,
+                    `${moduleUrl}: Exceeds project scope. Configure server.fs.strict=false to disable this check`
+                );
             }
         } else {
             if (typeof loadResult === "string") {
@@ -156,10 +162,13 @@ export class TransformRequester {
             if (getPublicFilePath(this.server.config.publicDir, moduleUrl)) {
                 logger.error(
                     LOGTAG,
-                    `${moduleUrl}：当前请求时publicDir下的资源，不允许进行转换类请求，如果必须这么做，请考虑移动到src下，或检查文件重名问题。`
+                    `${moduleUrl}: Resources under publicDir cannot be transformed. Move to src directory or check for duplicate filenames.`
                 );
             } else {
-                logger.warn(LOGTAG, `${prettifyUrl(id, this.server.config.root)}在执行load时，没有返回任何内容`);
+                logger.warn(
+                    LOGTAG,
+                    `${prettifyUrl(id, this.server.config.root)} returned nothing during load execution`
+                );
             }
             return;
         }
@@ -173,7 +182,10 @@ export class TransformRequester {
             let transformResult = await this.server.pluginContainer.transform(code, id, map);
 
             if (transformResult === null) {
-                logger.warn(LOGTAG, `${moduleUrl}：该文件进入插件代码转换后，转换结果为空，先按跳过处理`);
+                logger.warn(
+                    LOGTAG,
+                    `${moduleUrl}: Empty transformation result after plugin processing. Skipping this file.`
+                );
             } else {
                 code = transformResult.code;
                 map = transformResult.map;

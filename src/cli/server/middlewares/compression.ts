@@ -10,13 +10,13 @@ const MIMES_RE = /text|javascript|\/json|xml/i;
 const THRESHOLD = 1024;
 /**压缩等级 */
 const LEVE = -1;
-const LOGTAG = "压缩中间件";
+const LOGTAG = "Compression Middleware";
 
 export class CompressionMiddleware {
     constructor(server: Server) {
         server.httpServer.app.use(this.exec.bind(this));
 
-        logger.debug(LOGTAG, `zlib中间件已初始化`);
+        logger.debug(LOGTAG, `zlib middleware initialized`);
     }
 
     exec(req: http.IncomingMessage, res: http.ServerResponse, next: NextFunction): void {

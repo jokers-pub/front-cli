@@ -22,7 +22,7 @@ export function dataURIPlugin(): Plugin {
 
             let [, mime, format, data] = match;
             if (mime !== "text/javascript") {
-                throw new Error(`不支持非Javascript mime类型的data-URI`);
+                throw new Error(`Data-URI with non-JavaScript MIME type is not supported`);
             }
 
             let base64 = format && /base64/i.test(format.substring(1));

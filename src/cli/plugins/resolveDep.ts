@@ -5,7 +5,7 @@ import { logger } from "../logger";
 import { Plugin } from "../plugin";
 import { getDepVersion } from "../utils";
 
-const LOGTAG = "DEP缓存";
+const LOGTAG = "DEP-Cache";
 
 export function resolveDepPlugin(config: ResolvedConfig): Plugin {
     return {
@@ -50,7 +50,7 @@ export function resolveDepPlugin(config: ResolvedConfig): Plugin {
                         if (depInfo.browserHash !== newDep?.browserHash) {
                             logger.warn(
                                 LOGTAG,
-                                `ID:${depInfo.id}，该依赖发现新版本，正在尝试更新缓存，若无法按新依赖生效，请重启CLI。`
+                                `ID:${depInfo.id}, a new version of this dependency has been found. Attempting to update the cache. If the new dependency fails to take effect, please restart the CLI.`
                             );
 
                             //重置resolved索引，用于下次重置版本v=?
@@ -129,7 +129,10 @@ export const ERR_RESOLVE_DEP_PROCESSING_ERROR = "ERR_RESOLVE_DEP_PROCESSING_ERRO
 
 export function throwOutdatedRequest(id: string): never {
     let err: any = new Error(
-        logger.error(LOGTAG, `当前：${id}包发现另一个版本，请尝试清除浏览器缓存以便能顺利加载到最新的版本。`)
+        logger.error(
+            LOGTAG,
+            `Currently: Another version of package ${id} has been detected. Please try clearing your browser cache to ensure the latest version loads correctly.`
+        )
     );
 
     err.code = ERR_OUTDATED_RESOLVED_DEP;
@@ -138,7 +141,9 @@ export function throwOutdatedRequest(id: string): never {
 }
 
 function throwProcessingError(id: string): never {
-    let err: any = new Error(`${id}:在解析时，发生了异常终端，需要刷新页面/重启脚手架进行重新初始化`);
+    let err: any = new Error(
+        `${id}: An unexpected termination occurred during parsing. Please refresh the page or restart the scaffolding tool to reinitialize.`
+    );
 
     err.code = ERR_RESOLVE_DEP_PROCESSING_ERROR;
     throw err;

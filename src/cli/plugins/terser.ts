@@ -62,7 +62,9 @@ function getTerserPath(config: ResolvedConfig): string {
     let pkg = resolvePackageData("terser", config.root);
 
     if (!pkg) {
-        throw new Error(logger.error(LOGTAG, `未找到terser，请确定是否正确的安装了该依赖。`));
+        throw new Error(
+            logger.error(LOGTAG, `Terser not found. Please ensure this dependency is correctly installed.`)
+        );
     } else {
         terserPath = path.resolve(pkg.dir, pkg.data.main);
     }
