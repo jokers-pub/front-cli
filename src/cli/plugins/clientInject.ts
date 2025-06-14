@@ -32,7 +32,7 @@ export function clientInjectPlugin(config: ResolvedConfig): Plugin {
                 .replace("__BASE__", JSON.stringify(devBase))
                 .replace("__HMR_HOSTNAME__", JSON.stringify(host))
                 .replace("__HMR_PORT__", JSON.stringify(port))
-                .replace("__HMR_CLIENT_ID__", server.clientId)
+                .replace("__HMR_CLIENT_ID__", JSON.stringify(server.clientId))
                 .replace("__HMR_HEARTTIMER__", JSON.stringify(timeout));
         }
     };
