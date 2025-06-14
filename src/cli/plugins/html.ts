@@ -338,7 +338,12 @@ export function htmlBuildPlugin(config: ResolvedConfig): Plugin {
             }
 
             let htmlStr = s.toString();
-            htmlStr = minify(htmlStr);
+            htmlStr = minify(htmlStr, {
+                collapseWhitespace: true,
+                removeComments: true,
+                minifyCSS: true,
+                minifyJS: true
+            });
             processedHtml.set(id, htmlStr);
 
             return jsStr;
@@ -506,6 +511,13 @@ export function htmlBuildPlugin(config: ResolvedConfig): Plugin {
                 if (chunk && canInlineEntry) {
                     delete bundle[chunk.fileName];
                 }
+
+                html = minify(html, {
+                    collapseWhitespace: true,
+                    removeComments: true,
+                    minifyCSS: true,
+                    minifyJS: true
+                });
 
                 //写回节点
                 this.emitFile({
