@@ -20,7 +20,7 @@ import { toOutputFilePath } from "../build";
 import { ElementAttr, NodeType, TextNode } from "@joker.front/sfc";
 import { ASSET_URL_RE, getAssetFilename, urlToBuildUrl } from "./asset";
 import { OutputChunk } from "rollup";
-
+import { minify } from "html-minifier";
 const LOGTAG = "plugin/html";
 const HTML_PROXY_MAP: WeakMap<ResolvedConfig, Map<string, Array<{ code: string; map?: SourceMap }>>> = new WeakMap();
 const ASYNC_SCRIPT_MAP: WeakMap<ResolvedConfig, Map<string, boolean>> = new WeakMap();
@@ -331,7 +331,9 @@ export function htmlBuildPlugin(config: ResolvedConfig): Plugin {
                 }
             }
 
-            processedHtml.set(id, s.toString());
+            let htmlStr = s.toString();
+            htmlStr = minify(htmlStr);
+            processedHtml.set(id, htmlStr);
 
             return jsStr;
         },
