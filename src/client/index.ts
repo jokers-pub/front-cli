@@ -8,7 +8,7 @@ declare const __BASE__: string;
 declare const __HMR_HOSTNAME__: string | null;
 declare const __HMR_PORT__: string | null;
 declare const __HMR_HEARTTIMER__: number;
-
+declare const __HMR_CLIENT_ID__: string;
 //取值设值
 let importMetaUrl = new URL(import.meta.url);
 /**Socket协议 */
@@ -17,6 +17,8 @@ let socketProtocol: "ws" | "wss" = location.protocol === "https" ? "wss" : "ws";
 let base = __BASE__;
 /**热更新端口 */
 let hmrPort = __HMR_PORT__;
+/**热更新端口 */
+let hmrClientId = __HMR_CLIENT_ID__;
 /**Socket HOST */
 let socketHost = `${__HMR_HOSTNAME__ || importMetaUrl.hostname}:${hmrPort || importMetaUrl.port}${base}`;
 
@@ -102,6 +104,8 @@ class SocketService {
     }
 
     private receiveMessage(hmr: IHMRType.All) {
+        if (hmr.clientId !== hmrClientId) return;
+
         switch (hmr.type) {
             case "connected":
                 logger.info("Server connection established");

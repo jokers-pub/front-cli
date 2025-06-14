@@ -21,6 +21,7 @@ import { removePackageData } from "../package";
 import { hmrFileAddUnlink, HMRType, hmrUpdate, parserHMRError } from "./hmr";
 import { searchForWorkspaceRoot } from "../root";
 import { BasePathMiddleware } from "./middlewares/basePath";
+import { guid } from "@joker.front/shared";
 
 const LOGTAG = "Server";
 
@@ -78,11 +79,12 @@ export class Server {
 
     public transformRequester: TransformRequester;
 
+    clientId = guid();
     constructor(public config: ResolvedConfig) {
         this.httpServer = new HttpServer(this.config.server, this.config.base);
         logger.debug(LOGTAG, "HTTP server initialized successfully");
 
-        this.socketServer = new SocketServer(this.config.server);
+        this.socketServer = new SocketServer(this, this.config.server);
         logger.debug(LOGTAG, "WebSocket server established successfully");
 
         this.watcher = chokidar.watch(this.config.root, {

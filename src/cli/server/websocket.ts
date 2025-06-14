@@ -1,4 +1,4 @@
-import { ServerOptions } from ".";
+import { Server, ServerOptions } from ".";
 import { WebSocket, WebSocketServer, ServerOptions as WsServerOptions } from "ws";
 import { HMRType } from "./hmr";
 import { logger } from "../logger";
@@ -20,7 +20,7 @@ export class SocketServer {
 
     private customPort = false;
 
-    constructor(config: ServerOptions = {}) {
+    constructor(private server: Server, config: ServerOptions = {}) {
         if (config.hmr) {
             let hmrOption = typeof config.hmr === "boolean" ? {} : config.hmr;
             if (hmrOption.port) {
@@ -49,6 +49,8 @@ export class SocketServer {
         } else {
             hmr = v1;
         }
+
+        hmr.clientId = this.server.clientId;
 
         let result = JSON.stringify(hmr);
 
