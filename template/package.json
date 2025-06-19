@@ -10,6 +10,6 @@
         "@joker.front/router": "^1.0.44"
     },
     "devDependencies": {
-        "@joker.front/cli": "^1.1.150"
+        "@joker.front/cli": "^1.1.151"
     }
 }
