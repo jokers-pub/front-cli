@@ -22,6 +22,10 @@
         "build-tool"
     ],
     "homepage": "https://front.jokers.pub/cli/introduction",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jokers-pub/front-cli.git"
+    },
     "bin": {
         "joker": "bin/joker.js"
     },
