@@ -32,8 +32,6 @@ import path from "node:path";
 import { toOutputFilePath } from "../build";
 import MagicString from "magic-string";
 
-const LOGTAG = "CSS插件";
-
 const COMMONJS_PROXY_RE = /\?commonjs-proxy/;
 
 const INLINE_RE = /(\?|&)inline\b/;

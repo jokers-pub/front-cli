@@ -14,4 +14,8 @@ export default class extends Component {
 .test {
     background: red;
 }
+
+:root {
+    --aa: red;
+}
 </style>

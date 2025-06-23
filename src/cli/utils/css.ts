@@ -347,6 +347,20 @@ function getPostCssScopedPlugin(id = ""): PostCss.Plugin {
                 selectorRoot.each((selector) => {
                     let node: postcssSelectorParser.Node | undefined = undefined;
                     let isRootDeep = selector.first.type === "pseudo" && selector.first.value === ":deep";
+                    // 判断当前选择器是否包含 :root 伪类
+                    let hasRootPseudo = false;
+                    selector.each((n) => {
+                        if (n.type === "pseudo" && n.value === ":root") {
+                            hasRootPseudo = true;
+                            return false; // 停止遍历
+                        }
+                    });
+
+                    // 如果包含 :root 伪类，则跳过后续处理
+                    if (hasRootPseudo) {
+                        return;
+                    }
+
                     selector.each((n) => {
                         if (n.type === "pseudo") {
                             if (n.value === ":deep") {
