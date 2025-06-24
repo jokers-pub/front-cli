@@ -48,7 +48,7 @@
     "devDependencies": {
         "@ampproject/remapping": "^2.3.0",
         "@joker.front/library-cli": "1.2.14",
-        "@joker.front/sfc": "^1.1.23",
+        "@joker.front/sfc": "^1.1.24",
         "@joker.front/shared": "^1.5.30",
         "@jridgewell/trace-mapping": "^0.3.25",
         "@rollup/pluginutils": "^5.1.0",
