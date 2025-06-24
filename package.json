@@ -25,6 +25,10 @@
     "bin": {
         "joker": "bin/joker.js"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jokers-pub/front-cli.git"
+    },
     "files": [
         "dist/bundle.js",
         "dist/client.es.js",
