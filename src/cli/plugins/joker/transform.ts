@@ -20,6 +20,7 @@ export function transformJoker(config: ResolvedConfig, code: string, filename: s
     let styleCodePart = trasnformStyleImport(filename, parserResult.descriptor, parserResult.hash);
 
     let output = [
+        config.command === "server" ? 'window[Symbol.for("__JOKER_TRACE_EXPRESSIONS__")]??=true;' : "",
         //HMR 注入Joker Runtime
         hmr ? `import {${JOKER_HMR_RUNTIME}} from "@joker.front/core";` : "",
         scriptCodePart,

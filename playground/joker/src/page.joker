@@ -2,7 +2,15 @@
     <div>
         我是Joker125336666内容11334：
         <b>@model.date</b>
-        <Temp count="@(3)"></Temp>
+        <Temp
+            count="@(3)"
+            s="@({
+                            a: 1model.date,
+                            c: `
+                sd${model.date}sds
+                dsd${model.date + 1}sa
+            `
+                        })"></Temp>
         <Temp2 count="@(2)"></Temp2>
     </div>
 </template>

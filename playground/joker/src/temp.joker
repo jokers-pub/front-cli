@@ -1,16 +1,19 @@
 <template>
     111
-    @for(let i=0;i<this.props.count;i++) {
+    @for(let i = 0; i < this.props.count; i++) {
         <div>
             2@i
             : @model.time
         </div>
     }
+    <p>
+        测试换行参数 @props.s.c
+    </p>
 </template>
 <script>
 import { Component } from "@joker.front/core";
 
-export default class extends Component<{ count: number }> {
+export default class extends Component<{ count: number; s: any }> {
     model = {
         time: 0
     };
@@ -18,6 +21,7 @@ export default class extends Component<{ count: number }> {
         count: 0
     };
     mounted() {
+        debugger;
         setInterval(() => {
             this.model.time += 1;
         }, 100);
