@@ -102,6 +102,12 @@ export interface BuildOptions {
     publicBaseDir?: string;
 
     /**
+     * Options for terser
+     * https://terser.org/docs/api-reference#minify-options
+     */
+    terserOptions?: any;
+
+    /**
      * Options for worker bundles
      */
     worker?: {
@@ -124,7 +130,8 @@ export function resolveBuildOpt(config: Partial<ResolvedConfig>) {
         chunkSizeWarningLimit: 500,
         copyPublicDir: true,
         publicBaseDir: "",
-        worker: {}
+        worker: {},
+        terserOptions: {}
     };
 
     Object.assign(resolevd, config.build ?? {});

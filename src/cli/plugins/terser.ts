@@ -38,6 +38,7 @@ export function terserPlugin(config: ResolvedConfig): Plugin {
             let res = await worker.run(getTerserPath(config), code, {
                 safari10: true,
                 sourceMap: !!opts.sourcemap,
+                ...config.build.terserOptions,
                 module: opts.format.startsWith("es"),
                 toplevel: opts.format === "cjs"
             });
