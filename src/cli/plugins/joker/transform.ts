@@ -72,7 +72,7 @@ function trasnformScriptImport(filename: string, parserResult: JokerParserResult
 }
 
 function trasnformTemplateImport(filename: string, parserResult: JokerParserResult, hmr: boolean): string | undefined {
-    if (parserResult.descriptor.template) {
+    if (parserResult.descriptor.template && parserResult.descriptor.template?.content.trim()) {
         const request = JSON.stringify(filename + "?joker&type=template");
         let result = [`import ${SFC_TEMPLATE_EXPORT_DEFAULT} from ${request};`];
 
@@ -90,7 +90,7 @@ function trasnformTemplateImport(filename: string, parserResult: JokerParserResu
 }
 
 function trasnformStyleImport(filename: string, descriptor: SFCDescriptor, hash: string): string {
-    if (descriptor.style) {
+    if (descriptor.style && descriptor.style.content?.trim()) {
         const request = JSON.stringify(
             filename +
                 `?joker&type=style&lang=${descriptor.style.attrs?.lang ?? "css"}${

@@ -338,12 +338,7 @@ export function htmlBuildPlugin(config: ResolvedConfig): Plugin {
             }
 
             let htmlStr = s.toString();
-            htmlStr = minify(htmlStr, {
-                collapseWhitespace: true,
-                removeComments: true,
-                minifyCSS: true,
-                minifyJS: true
-            });
+
             processedHtml.set(id, htmlStr);
 
             return jsStr;
