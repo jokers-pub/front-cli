@@ -318,7 +318,7 @@ export function importAnalysisPlugin(config: ResolvedConfig): Plugin {
                             source,
                             start
                         )}`;
-                        this.warn(logger.warn(LOGTAG, warnMessage));
+                        logger.warn(LOGTAG, warnMessage);
                     }
 
                     let url = rawUrl.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, "").trim();

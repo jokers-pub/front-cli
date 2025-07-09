@@ -874,7 +874,7 @@ export function generateCodeFrame(source: string, start: number | { line: number
  * @param stack
  */
 export function createErrorMsgFromRollupError(err: RollupError) {
-    let result: string[] = [color.yellow(`信息：${err.message}`)];
+    let result: string[] = [color.yellow(`${err.message}`)];
     if (err.plugin) {
         result.push(` Plugin:${color.magenta(err.plugin)}`);
     }
