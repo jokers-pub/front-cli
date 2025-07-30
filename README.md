@@ -26,4 +26,4 @@ It furnishes two commands, "server" and "build", which respectively denote devel
 
 [Help Documentation](https://front.jokers.pub/cli/introduction)
 
-[Low-Code Platform](https://lowcode.jokers.pub)
+[Visual Coding IDE](https://vicode.jokers.pub)
