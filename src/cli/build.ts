@@ -260,9 +260,13 @@ function initOutDir(config: ResolvedConfig, outDir: string) {
     }
 
     //如果存在publicDir，则做copy处理
-    if (config.publicDir && fs.existsSync(config.publicDir) && config.build.copyPublicDir) {
-        copyDir(config.publicDir, outDir);
-        logger.debug(LOGTAG, `${config.publicDir} has been copied to output directory`);
+    if (config.publicDir && config.build.copyPublicDir) {
+        if (fs.existsSync(config.publicDir)) {
+            copyDir(config.publicDir, outDir);
+            logger.debug(LOGTAG, `${config.publicDir} has been copied to output directory`);
+        } else {
+            logger.warn(LOGTAG, `${config.publicDir} is not exist.`);
+        }
     }
 }
 
