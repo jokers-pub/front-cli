@@ -18,6 +18,7 @@ import { DepMetadata, DepInfo } from "./metadata";
 import { Server } from "../server";
 import { HMRType } from "../server/hmr";
 import { removeFilter } from "@joker.front/shared";
+import { throwOutdatedRequest } from "../plugins/resolveDep";
 const LOGTAG = "DEP";
 
 /**
@@ -711,7 +712,12 @@ export class DepHandler {
     private fullReload() {
         if (this.config.command === "server" && this.server) {
             this.server.moduleMap.disposeAllModule();
-
+            //重置resolved索引，用于下次重置版本v=?
+            this.config.depHandler.server?.pluginContainer.resolveIdCache.clear();
+            logger.warn(
+                LOGTAG,
+                `New DEP cache reference detected; preparing to reload the page to update dependencies.`
+            );
             this.server.socketServer.send(new HMRType.Reload("*"));
         }
     }

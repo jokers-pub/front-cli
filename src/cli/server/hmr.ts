@@ -315,7 +315,7 @@ export function updateModules(ctx: HMRContext) {
     }
 
     if (fullReload) {
-        logger.info(
+        logger.warn(
             LOGTAG,
             `Dependency endpoint or interruption exception detected during module update. Full page reload required for hot update.`
         );
