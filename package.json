@@ -7,7 +7,7 @@
         "build-cli": "node build/index.js --format=cjs --input=src/cli/index.ts",
         "build": "npm run build-client & npm run build-cli",
         "release": "npm run build && npm publish",
-        "release:prod": "npm run build && npm run build:prod && npm publish --access public --registry https://registry.npmjs.org/"
+        "release:prod": "npm run build && npm publish --access public --registry https://registry.npmjs.org/"
     },
     "main": "dist/bundle.js",
     "module": "dist/bundle.js",
