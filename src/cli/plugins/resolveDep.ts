@@ -30,11 +30,6 @@ export function resolveDepPlugin(config: ResolvedConfig): Plugin {
                 let depInfo = config.depHandler.getDepInfoFromFile(file);
 
                 if (depInfo) {
-                    //已失效
-                    if (browserHash && depInfo.browserHash !== browserHash) {
-                        throwOutdatedRequest(id);
-                    }
-
                     try {
                         await depInfo.processing;
                     } catch {
