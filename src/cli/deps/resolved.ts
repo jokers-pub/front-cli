@@ -14,7 +14,7 @@ import {
 } from "../utils";
 import path from "node:path";
 import { logger } from "../logger";
-import { esbuildCjsExternalPlugin, esbuildDepPlugin } from "./esbuildPlugin";
+import { esbuildCjsExternalPlugin, esbuildDepPlugin, WORKET_ENTRY_POINTS } from "./esbuildPlugin";
 import { init as esModuleLexerInit, parse } from "es-module-lexer";
 import { performance } from "node:perf_hooks";
 import { build } from "esbuild";
@@ -185,32 +185,66 @@ async function resolveDep(
         };
     }
 
-    for (let src in meta.outputs) {
-        //排除.js.map文件
-        if (!src.match(JS_MAP_EXTENSION_RE)) {
-            //将相对路径，并剔除.js后缀作为id
-            let id = path.relative(processingCacheDirOutPath, src).replace(JS_EXTENSION_RE, "");
+    let setChunks = (outpus: any) => {
+        for (let src in outpus) {
+            //排除.js.map文件
+            if (!src.match(JS_MAP_EXTENSION_RE)) {
+                //将相对路径，并剔除.js后缀作为id
+                let id = path.relative(processingCacheDirOutPath, src).replace(JS_EXTENSION_RE, "");
 
-            let file = depHandler.getDepPath(id);
+                let file = depHandler.getDepPath(id);
 
-            let isExist = false;
-            for (let depId in metadata.resolved) {
-                if (metadata.resolved[depId].file === file) {
-                    isExist = true;
-                    break;
+                let isExist = false;
+                for (let depId in metadata.resolved) {
+                    if (metadata.resolved[depId].file === file) {
+                        isExist = true;
+                        break;
+                    }
+                }
+
+                //嵌套依赖项
+                if (isExist === false) {
+                    metadata.chunks[id] = {
+                        id,
+                        file,
+                        needRewriteImport: false,
+                        browserHash: metadata.browserHash
+                    };
                 }
             }
-
-            //嵌套依赖项
-            if (isExist === false) {
-                metadata.chunks[id] = {
-                    id,
-                    file,
-                    needRewriteImport: false,
-                    browserHash: metadata.browserHash
-                };
-            }
         }
+    };
+    setChunks(meta.outputs);
+
+    //补充解析 work url
+    if (WORKET_ENTRY_POINTS.size) {
+        let result = await build({
+            absWorkingDir: process.cwd(),
+            entryPoints: Object.fromEntries(WORKET_ENTRY_POINTS),
+            bundle: true,
+            platform: "browser",
+            define: {
+                "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || config.mode)
+            },
+            format: "esm",
+            target: ESBUILD_MODULES_TARGET,
+            external,
+            logLevel: "error",
+            splitting: true,
+            sourcemap: true,
+            outdir: processingCacheDir,
+            ignoreAnnotations: !isBuild,
+            metafile: true,
+            plugins,
+            supported: {
+                "dynamic-import": true,
+                "import-meta": true
+            }
+        });
+        WORKET_ENTRY_POINTS.clear();
+
+        setChunks(result.metafile.outputs);
+        //只解析一次即可， worker 内理论上不会嵌套
     }
 
     depHandler.depCache.writeCache(metadata, processingCacheDir);

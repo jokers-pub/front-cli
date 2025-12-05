@@ -5,7 +5,9 @@ import { CSS_LANG_ARRAY, flattenId, moduleListContains, normalizePath } from "..
 import path from "node:path";
 import { isEmptyStr, isExternalUrl } from "@joker.front/shared";
 import { browserExternalId } from "../plugins/resolve";
-
+import fs from "node:fs";
+import { stripLiteral } from "strip-literal";
+import MagicString from "magic-string";
 /**
  * 针对外部引用转换cjs模式的esbuild插件
  * @param externals
@@ -41,7 +43,7 @@ export function esbuildCjsExternalPlugin(externals: string[]): Plugin {
 
 const EXTERNAL_WITH_CONVERSION_NAMESPACE = "joker:dep-pre-bundle:external-conversion";
 const CONVERTED_EXTERNAL_PREFIX = "joker-dep-pre-bundle-external:";
-
+export const WORKET_ENTRY_POINTS = new Map<string, string>();
 export function esbuildDepPlugin(
     flatIdDeps: Record<string, string>,
     flatIdToExports: Record<string, ExportDatas>,
@@ -59,14 +61,10 @@ export function esbuildDepPlugin(
         isRequire: true
     });
 
-    function resolve(id: string, importer: string, kind: ImportKind, resolveDir?: string): Promise<string | undefined> {
+    function resolve(id: string, importer: string, kind: ImportKind): Promise<string | undefined> {
         let _importer: string;
 
-        if (resolveDir) {
-            _importer = normalizePath(path.join(resolveDir, "*"));
-        } else {
-            _importer = importer in flatIdDeps ? flatIdDeps[importer] : importer;
-        }
+        _importer = importer in flatIdDeps ? flatIdDeps[importer] : importer;
 
         return (kind.startsWith("require") ? _resolveRequire : _resolve)(id, _importer);
     }
@@ -85,6 +83,44 @@ export function esbuildDepPlugin(
     return {
         name: "joker:dep-pre-bundle",
         setup(build) {
+            build.onLoad({ filter: /\.(js|ts|mjs|cjs)$/ }, async (args) => {
+                const code = await fs.promises.readFile(args.path, "utf8");
+
+                const cleanString = stripLiteral(code);
+                const workerImportMetaUrlRE =
+                    /\bnew\s+(?:Worker|SharedWorker)\s*\(\s*(new\s+URL\s*\(\s*('[^']+'|"[^"]+"|`[^`]+`)\s*,\s*import\.meta\.url\s*\))/dg;
+
+                let match: RegExpExecArray | null;
+
+                let s = new MagicString(code);
+                while ((match = workerImportMetaUrlRE.exec(cleanString))) {
+                    const [[, endIndex], [expStart, expEnd], [urlStart, urlEnd]] = match.indices!;
+
+                    const rawUrl = code.slice(urlStart, urlEnd);
+
+                    const url = rawUrl.slice(1, -1);
+                    // 手动解析真实路径
+                    const importerDir = path.dirname(args.path);
+                    const resolvedPath = path.resolve(importerDir, url);
+
+                    let id = resolvedPath.split("node_modules").pop();
+                    if (id) {
+                        id = flattenId(id);
+                        // 验证路径存在
+                        if (fs.existsSync(resolvedPath)) {
+                            WORKET_ENTRY_POINTS.set(id, resolvedPath);
+
+                            s.update(expStart, expEnd, `new URL('' + ${JSON.stringify(id)}, import.meta.url)`);
+                        }
+                    }
+                }
+
+                // 返回原内容，不修改代码
+                return {
+                    contents: s.toString(),
+                    loader: args.path.endsWith(".ts") ? "ts" : "js"
+                };
+            });
             build.onResolve(
                 { filter: new RegExp(`\\.(${EXTERNALTYPES.join("|")})(\\?.*)?$`) },
                 async ({ path: id, importer, kind }) => {
@@ -215,13 +251,14 @@ module.exports = Object.create(
                     key !== "splice"
                     ) {
                         throw new Error(
-                            "模块：" + ${id} + " 不允许访问其" + (key || "").toString() + "属性"
+                            "模块：" + ${JSON.stringify(id)} + " 不允许访问其" + (key || "").toString() + "属性"
                         );
                     }
-                 }
+                 return undefined;
             }
-        )
-    );`
+        }
+    )
+);`
                 };
             });
         }
