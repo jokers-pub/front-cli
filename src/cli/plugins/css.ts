@@ -176,7 +176,9 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
                 name: cssAssetName,
                 originalFileName: cssAssetName,
                 type: "asset",
-                source: `/* Internal call for joker, can be ignored */`
+                source: `/* Internal call for joker, can be ignored */`,
+                names: [],
+                originalFileNames: []
             })
         );
     };

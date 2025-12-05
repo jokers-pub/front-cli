@@ -251,7 +251,9 @@ export function assetFilenamesToFilename(
             name: basename,
             source: typeof content === "string" ? content : new Uint8Array(content),
             type: "asset",
-            originalFileName: basename
+            originalFileName: basename,
+            originalFileNames: [],
+            names: []
         });
     }
 

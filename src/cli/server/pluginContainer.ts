@@ -14,6 +14,7 @@ import type {
     PluginContextMeta,
     ResolvedId,
     RollupError,
+    RollupFsModule,
     RollupLog,
     SourceDescription,
     SourceMap,
@@ -365,6 +366,7 @@ export class RollupPluginContext
             | "debug"
             | "info"
             | "parse"
+            | "fs"
         >
 {
     watchFiles = new Set<string>();
