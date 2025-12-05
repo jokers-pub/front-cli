@@ -7,6 +7,7 @@ import { createToImportMetaURLBasedRelativeRuntime, onRollupWarning, toOutputFil
 import path from "path";
 import { fileToUrl } from "./asset";
 import MagicString from "magic-string";
+import { terserPlugin } from "./terser";
 
 export type WorkerType = "classic" | "module" | "ignore";
 export const WORKER_FILE_ID = "worker_file";
@@ -189,8 +190,11 @@ async function bundleWorkerEntry(
     id: string,
     query?: Record<string, string>
 ): Promise<OutputChunk> {
-    let plugins = await config.build.worker.plugins?.(id);
+    let plugins = [await config.build.worker.plugins?.(id)].flat().filter(Boolean);
 
+    if (config.build.minify) {
+        plugins.push(terserPlugin(config));
+    }
     let bundle = await rollup({
         ...config.build.worker.rollupOptions,
         input: cleanUrl(id),
@@ -208,6 +212,8 @@ async function bundleWorkerEntry(
             entryFileNames: path.posix.join(config.build.assetsDir, "[name]-[hash].js"),
             chunkFileNames: path.posix.join(config.build.assetsDir, "[name]-[hash].js"),
             assetFileNames: path.posix.join(config.build.assetsDir, "[name]-[hash].[ext]"),
+
+            ...config.build.rollupOptions.output,
             sourcemap: config.build.sourcemap
         });
 
