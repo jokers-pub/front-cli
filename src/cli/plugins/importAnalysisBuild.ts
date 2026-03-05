@@ -33,7 +33,7 @@ export function importAnalysisBuildPlugin(config: ResolvedConfig): Plugin {
     let insertPreload = !config.build.lib;
 
     let assetsURL = isRelativeBase
-        ? `function(dep,importUrl){return new URL(dep,importerUrl).href;}`
+        ? `function(dep,importUrl){return new URL(dep,importUrl).href;}`
         : `function(dep){return ${JSON.stringify(config.base)}+dep;}`;
 
     return {
