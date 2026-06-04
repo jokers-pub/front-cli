@@ -34,7 +34,7 @@ const packagePath = path.join(__dirname, "../package.json");
 
 export const { version } = JSON.parse(readFileSync(packagePath).toString());
 
-export const ESBUILD_MODULES_TARGET = ["es2020", "edge88", "firefox78", "chrome87", "safari14"];
+export const ESBUILD_MODULES_TARGET = ["es2020", "chrome100", "edge107", "firefox104", "safari16"];
 export const DEFAULT_EXTENSIONS = [".js", "mjs", "mts", ".ts", ".json"];
 export const DEFAULT_MAIN_FIELDS = ["browser", "module", "jsnext:main", "jsnext"];
 export interface Config {
