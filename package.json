@@ -1,6 +1,6 @@
 {
     "name": "@joker.front/cli",
-    "version": "1.1.160",
+    "version": "1.1.161",
     "description": "",
     "scripts": {
         "build-client": "node build/index.js --format=es --input=src/client/index.ts --output=client",
