@@ -34,7 +34,7 @@ const packagePath = path.join(__dirname, "../package.json");
 
 export const { version } = JSON.parse(readFileSync(packagePath).toString());
 
-export const ESBUILD_MODULES_TARGET = ["es2020", "edge88", "firefox78", "chrome87", "safari13"];
+export const ESBUILD_MODULES_TARGET = ["es2020", "edge88", "firefox78", "chrome87", "safari14"];
 export const DEFAULT_EXTENSIONS = [".js", "mjs", "mts", ".ts", ".json"];
 export const DEFAULT_MAIN_FIELDS = ["browser", "module", "jsnext:main", "jsnext"];
 export interface Config {
@@ -241,8 +241,8 @@ export async function resolveCliConfig(
     result.cacheDir = result.cacheDir
         ? path.resolve(result.root, result.cacheDir)
         : pkgPath
-        ? path.join(path.dirname(pkgPath), "node_modules/.joker")
-        : path.join(result.root, ".joker");
+          ? path.join(path.dirname(pkgPath), "node_modules/.joker")
+          : path.join(result.root, ".joker");
 
     let sortPluginResult = sortPlugins(result.plugins?.flat() || []);
 
